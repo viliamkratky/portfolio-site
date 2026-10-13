@@ -1,0 +1,75 @@
+---
+/**
+ * Diagram: Medical Navigator directory: one filter state, many views.
+ * Built from the site's diagram grammar (node, edge, annotation).
+ * Content limited to behaviour observable on the public site.
+ */
+const inputs = [
+  { k: 'Guided header', v: 'three questions, ticked when answered' },
+  { k: 'Filter panel', v: '7 groups · live counts · searchable lists' },
+  { k: 'Active chips', v: 'remove one · clear all' },
+];
+const outputs = [
+  { k: 'Results', v: '10 at a time · Load more' },
+  { k: 'Result line', v: '“Showing 1–10 of 548 clinics”' },
+  { k: 'Live region', v: 'aria-live="polite" announces counts' },
+];
+---
+
+<figure class="not-prose my-16 lg:-mr-[calc((100%_-_144px)/7_+_24px)]">
+  <div class="relative rounded-xl bg-surface p-5 sm:p-8">
+    <div class="t-meta relative mb-6 flex justify-between text-fg-3">
+      <span><span class="text-accent-ink">Diagram</span> / one state, many views</span>
+      <span class="hidden sm:inline">directory / filters</span>
+    </div>
+
+    <div class="relative grid items-center gap-4 md:grid-cols-[1fr_auto_1.1fr_auto_1fr] md:gap-0">
+      <ul class="space-y-2.5">
+        {
+          inputs.map((n) => (
+            <li class="rounded-lg bg-elevated px-4 py-3">
+              <p class="text-[14px] text-fg">{n.k}</p>
+              <p class="t-mono mt-0.5 text-[11.5px] text-fg-3">{n.v}</p>
+            </li>
+          ))
+        }
+      </ul>
+
+      <div class="flex justify-center md:w-12 md:flex-col md:items-center" aria-hidden="true">
+        <span class="h-6 w-px bg-fg md:h-px md:w-full"></span>
+      </div>
+
+      <div class="relative rounded-lg bg-black px-5 py-6 text-center text-white">
+        <p class="t-meta text-[#00d816]">Single source of truth</p>
+        <p class="mt-2 font-display text-[22px] font-semibold tracking-[-0.02em]">Filter state in the URL</p>
+        <p class="t-mono mt-2 text-[12px] text-white/70">/en/clinics?f[0]=…&f[1]=…</p>
+        <p class="mt-3 text-[13px] leading-snug text-white/70">
+          Every filter is a real link. Works without JavaScript, can be shared and bookmarked.
+        </p>
+      </div>
+
+      <div class="flex justify-center md:w-12 md:flex-col md:items-center" aria-hidden="true">
+        <span class="h-6 w-px bg-fg md:h-px md:w-full"></span>
+      </div>
+
+      <ul class="space-y-2.5">
+        {
+          outputs.map((n) => (
+            <li class="rounded-lg bg-elevated px-4 py-3">
+              <p class="text-[14px] text-fg">{n.k}</p>
+              <p class="t-mono mt-0.5 text-[11.5px] text-fg-3">{n.v}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <p class="t-mono relative mt-6 pt-2 text-[12px] text-fg-3">
+      <span class="text-fg-2">+ JavaScript:</span> links update results in place, scroll position stays stable, header and panel
+      stay in sync.
+    </p>
+  </div>
+  <figcaption class="mt-4 max-w-[60ch] text-[14px] text-fg-3">
+    <span>Inputs on the left and views on the right all read and write one state. A filter is never hidden, not even one that matches nothing.</span>
+  </figcaption>
+</figure>

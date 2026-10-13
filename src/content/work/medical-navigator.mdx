@@ -1,0 +1,128 @@
+---
+title: Medical Navigator
+tagline: Turning 500+ fertility clinics across Europe into a comparison patients can actually use.
+summary: 'A patient-facing platform for comparing IVF clinics across Europe: success rates, prices, accreditations and reviews, side by side. I built the directory, its filters, the clinic pages and the booking flow.'
+order: 1
+year: '2026'
+period: April 2026 – present
+role: Frontend & Drupal developer, product team
+type: Healthcare comparison platform
+status: Live
+layers: [design, frontend, backend]
+stack: [Drupal 11, Twig, JavaScript, CSS, Faceted search, Progressive enhancement]
+liveUrl: https://medicalnavigator.com/en/
+cover: ../../assets/work/medical-navigator/home.jpg
+coverAlt: The Medical Navigator homepage, “Find the right IVF clinic for you”, with a clinic profile shown on a laptop.
+permission:
+  caseStudy: true
+  screenshots: true
+  source: Owner confirmation 2026-10-05; public facts only, verified on the live site 2026-10-12
+related: [portfolio, excolabs]
+---
+
+import FilterStateDiagram from '../../components/work/FilterStateDiagram.astro';
+
+{/* Source rule: only facts verifiable on the live public site. */}
+
+## Overview
+
+Medical Navigator helps people who are considering fertility treatment abroad find and compare clinics. The public directory currently lists **548 clinics in 10 countries**. Patients can filter by **23 treatments**, accreditation and destination, see prices in their own currency and then ask a coordinator to build them a personal shortlist.
+
+I worked on the patient-facing side of the product. My main areas were the clinic directory and its filters, the clinic cards and detail pages, the visitor's country, language and currency settings, and the multi-step contact and booking flow that turns a visitor into a consultation.
+
+## Context
+
+Choosing an IVF clinic abroad is a high-stakes decision made under stress. The information is scattered across clinic websites, forums and national registries. Each source describes treatments differently, quotes prices in a different currency and presents success rates in a way that is hard to compare.
+
+The product's answer is a comparison platform with an editorial voice. Every clinic gets a written *assessment*, a success-rate label based on national registry data, aggregated patient ratings and a structured list of services and prices. The interface has to make that density navigable without hiding the details that matter.
+
+## My role
+
+I was one of the developers on the product. My work covered:
+
+- building the **clinic directory**: the guided search header, the filter panel, active-filter chips, result counts, empty states and loading behaviour;
+- designing and iterating the **clinic card** and the **clinic and doctor detail pages**;
+- the **visitor settings**: the header chip and dialog for country, language and currency;
+- the **contact and booking flow**, including the phone field and the appointment picker;
+- shared pieces such as navigation states, buttons, the login page, team profiles and error pages;
+- accessibility and mobile behaviour across all of the above.
+
+I did not own product strategy, the medical and editorial content, the clinic research or the ranking logic.
+
+## The problem
+
+The directory has to reconcile three kinds of choices in one interface:
+
+1. **Hard constraints.** Where can I travel? Does the clinic offer the treatment I need? Is it accredited?
+2. **Personal context.** Where am I from, what language do I read and what currency do I think in?
+3. **Human comparison.** Is this clinic's success rate good? What does the price actually include? Can I trust the reviews?
+
+All of that has to work on a phone, in the middle of a stressful decision, for someone who may open the page from a forum link and leave if it feels like a sales funnel.
+
+## What I built
+
+### A guided entry instead of a wall of filters
+
+The directory opens with three questions instead of a form: *What is your country? What specialization are you looking for? What treatment do you need?* Each answered question is ticked, so the visitor always sees how far they have narrowed the search. The detailed filter panel sits beside the results for people who want more control.
+
+### Filters that never lie
+
+The filter panel covers clinic location, four groups of medical treatments (IVF, insemination, cryopreservation, other services) and six types of accreditation, each with a live clinic count. Long lists get their own search field ("Search treatments…"), and secondary groups start collapsed so the panel stays short on mobile.
+
+The hard part was keeping the filter state honest:
+
+- every active choice shows as a chip with its own remove action, plus a *Clear all*;
+- an active filter stays visible even when it currently matches nothing, so the visitor can always see and undo what is constraining the list;
+- the empty state distinguishes "nothing matches your filters" from "nothing here", and offers a reset only when a reset would help;
+- the result line shows the visible range and a correctly pluralised total ("Showing 1–10 of 548 clinics").
+
+### Fast, but built on real links
+
+Every filter is an ordinary link with the state in the URL, so a filtered list can be shared, bookmarked or opened without JavaScript. When JavaScript is available, those links update the results in place. The interface then keeps the scroll position stable, keeps the guided header and the side panel in sync, and announces the new result count to screen readers through a polite live region.
+
+<FilterStateDiagram />
+
+### Explicit loading, not an endless feed
+
+Results load ten at a time behind a **Load more** button rather than through infinite scroll. Comparing clinics is not browsing a feed: people adjust filters, open a clinic, come back and need to know where they are. A deliberate button keeps the footer reachable, keeps orientation and makes every network request the visitor's choice.
+
+### A clinic card that answers the first questions
+
+Each card is designed to answer "should I look closer?" without opening the clinic:
+
+- location with the country, linked to a map;
+- the success-rate label, linked to the methodology behind it;
+- the aggregated rating;
+- the price line, with an explanation of what the price covers available on hover or tap;
+- certificate icons and the languages spoken;
+- the editorial assessment, clamped to two lines with an accessible *View more* toggle.
+
+Missing photos fall back to designed placeholders instead of broken images.
+
+### Personal context in the header
+
+A compact chip in the header shows the visitor's language, country flag and currency symbol. It opens a *Select Country & Language* dialog. The site states plainly that these settings are used for personalised clinic ranking and stored anonymously. Prices are formatted for the chosen currency, with the symbol placed according to the locale. The picker offers **16 currencies**, and the dialog is designed to be quick to use on a phone.
+
+### From visitor to consultation
+
+The contact page is a **seven-step flow**: treatment, timing, preferences and notes, then contact details and a call slot in one step. I built the merged contact-and-booking step. It has a responsive day and time picker covering the next two weeks and an international phone field that searches countries and formats the number as the visitor types.
+
+## Design decisions
+
+- **Questions before controls.** The guided header lowers the cost of the first interaction. The full filter panel remains available but is not the entry point.
+- **Show the constraint, always.** In a medical context, a filter the visitor cannot see is worse than a confusing one. Visible chips and zero-match filters keep the list explainable.
+- **Server-rendered first.** Shareable URLs and no-JavaScript fallbacks were treated as requirements, and JavaScript was added on top for speed.
+- **Calm interaction.** Clinic cards carry no decorative hover effects, and navigation uses quiet pressed and active states. The interface should feel trustworthy rather than salesy.
+
+## Result
+
+Medical Navigator is live. Its public directory lists 548 clinics across Spain, the United Kingdom, Türkiye, Poland, Greece, Czechia, Cyprus, Slovakia, Austria and Portugal. Patients can filter by treatment, destination and accreditation, read assessed clinic profiles, view prices in their own currency and book a consultation call directly from the site.
+
+
+## What I learned
+
+1. **Faceted search is a state problem, not a query problem.** URLs, chips, empty states, focus and two synchronised sets of controls all need one consistent model of "what is active".
+2. **Progressive enhancement suits comparison interfaces.** Real links give resilience and shareability, and JavaScript makes the experience fast without becoming the source of truth.
+3. **Pagination is a UX decision.** For comparing, control and orientation beat an endless feed.
+4. **Trust is built in small details.** Explaining what a price covers, linking a success rate to its method and never hiding a filter matter as much as visual polish in healthcare.
+

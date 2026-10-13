@@ -1,0 +1,64 @@
+---
+title: This website
+tagline: A portfolio designed and built as a piece of software. Oversized type, kinetic letters, real data.
+summary: 'The site you are on. Static Astro pages with a motion layer on top: variable-font kinetic typography, scroll-driven scenes and a keyboard command menu. Every technical label on it is real data.'
+order: 2
+year: '2026'
+period: October 2026 – present
+role: Designer and engineer
+type: Personal product
+status: Live, evolving
+layers: [design, frontend, backend, ai, infra]
+stack: [Astro, TypeScript, Tailwind CSS v4, GSAP, Lenis, React (cmdk), Canvas, MDX]
+cover: ../../assets/work/portfolio/home.jpg
+coverAlt: The homepage of this site, with the name VILIAM KRÁTKY in oversized Hubot Sans above the line “Design on the surface. Engineering underneath.”
+permission:
+  caseStudy: true
+  screenshots: true
+  source: Self-owned project
+related: [medical-navigator, excolabs]
+---
+
+## Overview
+
+A portfolio is the one project where nobody else sets the constraints, so it is the clearest test of judgement. The goal was a site that *behaves* like the products I want to build: precise, fast, quiet where it should be, and loud exactly once per screen.
+
+Before writing code I wrote the system: positioning, an interaction model and an information architecture. The visual direction then changed completely, and that turned out to be the most useful part of the project.
+
+## Two directions, one decision
+
+The first version was a dark, warm "technical drawing": thin construction lines, mono annotations, an exploded 3D view of the page. It was clean and well built, and it was forgettable. Too many things competed on every screen, the hierarchy was flat, and the lines did the work that space should have done.
+
+The second direction kept the engineering and threw away the decoration: a white page, one oversized idea per screen, strong polarisation between huge and tiny type, and motion that carries the personality. Before rebuilding anything, I prototyped it on a private `/lab` page with three typefaces side by side and five candidate scenes.
+
+## Decisions
+
+### A typeface that moves
+
+The display face is **Hubot Sans**, an open-source variable font with both weight and width axes. Every letter of a headline is its own element; letters near the cursor get heavier and wider, and when the cursor rests a slow wave runs through the word. It is a few lines of `requestAnimationFrame` and `font-variation-settings`. No animation library, no canvas.
+
+The rest of the system is deliberately plain: **Mona Sans** for text, **Martian Mono** for the terminal and labels, **Doto** for a single dot-matrix accent.
+
+### One loud thing per screen
+
+Each scene owns one technique: kinetic type in the hero, a scroll-driven story where a halftone field turns the page from white to black, a project list where the preview follows the cursor and resolves from a dither into the real image, a terminal that types real output, and a magnetic call to action. Everything around it stays quiet.
+
+### Static first, motion on top
+
+Pages are static HTML from **Astro**. The motion layer (GSAP ScrollTrigger and Lenis) loads as one deferred module and never owns content: without JavaScript, or with reduced motion, every scene renders in its final, legible state. React is used in exactly one place: the `⌘K` command menu, built on cmdk for its accessibility.
+
+### Every annotation is real data
+
+The build stamp, commit and availability come from the build and from site config; the terminal prints the real stack list; section labels are real anchors used by keyboard navigation. Technical labels are a trend. Making each one true turns decoration into evidence.
+
+### A keyboard layer that never gets in the way
+
+`⌘K` opens the command menu and `:` switches it into a small command line. `j` / `k` move between sections, `g` + a letter jumps between pages, `?` lists everything. Single-key shortcuts never fire inside inputs or with modifier keys, and they can be switched off.
+
+## Built with agents, on purpose
+
+The site was implemented with coding agents working against written specifications, with decisions captured as they were made. The interesting part is not that AI wrote code, but the process around it: specifications first, a prototype before a rebuild, review against a quality bar, and a record of *why*. It is the same workflow I bring to client work.
+
+## What's next
+
+An About page, screenshots for each case study, a case study on Decision Watchdog and a measured performance write-up once the site has run in production.

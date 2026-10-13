@@ -1,0 +1,101 @@
+---
+title: ExCoLabs
+tagline: A bilingual company site that makes a broad technical offer read as one promise.
+summary: 'I designed and built the original ExCoLabs website on Drupal 11: a compact English/Slovak presence with one long-form homepage, one contact path and a verified offline archive.'
+order: 4
+year: '2025'
+period: August 2025 – September 2026
+role: Sole designer and developer
+type: B2B company website
+status: Completed, preserved
+layers: [design, frontend, backend]
+stack: [Drupal 11, Bootstrap 5, Bootstrap Barrio, Paragraphs, Swiper, Google Maps]
+liveUrl: https://excolabs.com
+cover: ../../assets/work/excolabs/desktop-hero.jpg
+coverAlt: The original ExCoLabs homepage hero, with a night skyline behind the headline “Your Digital Evolution Catalyst.”
+permission:
+  caseStudy: true
+  screenshots: true
+  source: Owner confirmation 2026-09-18 (archive project.yaml)
+related: [medical-navigator, portfolio]
+---
+
+import { Image } from 'astro:assets';
+import full from '../../assets/work/excolabs/desktop-full.jpg';
+import mobile from '../../assets/work/excolabs/mobile-sections.jpg';
+import Figure from '../../components/work/Figure.astro';
+
+## Overview
+
+ExCoLabs needed a credible public website for conversations with companies looking for cloud-native architecture, DevSecOps, enterprise AI and infrastructure testing. I designed and built the original version as a compact **English/Slovak** site on **Drupal 11**: one long-form homepage and one contact page with a working enquiry form.
+
+The scope was deliberately small. The homepage had to make a broad technical offer understandable without turning the site into a catalogue, then direct every visitor to one clear next step.
+
+## Role
+
+I was the sole designer and developer of this version:
+
+- defined the two-page information architecture and the homepage narrative;
+- created the logo, favicon and supporting visual assets;
+- structured and styled the homepage in Drupal;
+- prepared English and Slovak content and kept both versions aligned;
+- configured the contact page, company details, map and enquiry form;
+- tested responsive behaviour and preserved the finished state in an offline snapshot.
+
+**Not my work:** Drupal core, the Bootstrap Barrio base theme and the commercial Sandbox theme the site was built on, third-party stock photography and external certification marks.
+
+## The problem
+
+ExCoLabs covers disciplines that are usually sold by different companies: cloud architecture, secure delivery, AI infrastructure and network or e-mobility testing. Listed without an organising idea, they make a company look unfocused.
+
+The site needed to connect them through one promise, **disciplined technical delivery for organisations that value both governance and agility**, and to stay proportional. The company did not need an editorial site or a custom application yet. It needed a clear identity, enough proof for a first conversation and a reliable way to get in touch.
+
+<Figure caption="The complete original homepage. Proof (certifications) sits directly under the hero, services between proof and process, and every call to action leads to the same contact path." wide scroll>
+  <Image src={full} alt="Full-length capture of the original ExCoLabs homepage, from hero to footer." widths={[720, 1080, 1440]} sizes="(min-width: 1024px) 860px, 100vw" />
+</Figure>
+
+## Decisions
+
+### Keep the public site to two pages
+
+The homepage carries the complete company narrative and the contact page handles conversion. Separate service pages would have added navigation and maintenance before there was enough distinct content to justify them.
+
+### Use Drupal and an established theme as the delivery surface
+
+Drupal provided content editing, translations, menus, blocks and contact handling, so the owner could keep editing without a developer. Building on Bootstrap Barrio and Sandbox made responsive patterns available immediately, at the cost of inheriting some of the theme's visual identity and JavaScript payload.
+
+### Put proof before claims
+
+Nine certifications are the strongest concrete trust signal the company has. Showing them right after the hero gives technical and management visitors evidence *before* asking them to interpret broad service claims.
+
+### Present governance and agility together
+
+The approach section uses PRINCE2 Agile as the bridge between executive oversight and iterative delivery. It gives a wide service portfolio one operating model: how the company works, not only what it sells.
+
+## Challenges
+
+**Making a broad offer coherent.** Placing the services between proof (certifications) and process (the delivery approach) made the range read as intentional rather than accidental.
+
+**Bilingual parity.** Navigation, content, footer details and the contact route all exist in English and Slovak. Keeping both structurally equivalent was part of the implementation, not a later translation pass.
+
+**A durable archive.** A browser-saved page still depended on remote assets and live Drupal behaviour. I localised the visual dependencies, removed the reCAPTCHA runtime and verified the homepage over local HTTP with every non-local request blocked.
+
+<Figure caption="Responsive sections of the homepage on a phone.">
+  <Image src={mobile} alt="Several homepage sections shown side by side at mobile width." widths={[720, 1080, 1600]} sizes="(min-width: 1024px) 860px, 100vw" />
+</Figure>
+
+## Result
+
+- one responsive bilingual homepage and one bilingual contact page with a live enquiry form;
+- four service areas and nine certification signals presented as one narrative;
+- a direct path from every major call to action to contact;
+- a verified offline record of the homepage before the next redesign.
+
+No traffic or conversion metrics were available, so none are claimed.
+
+## What I learned
+
+1. **A narrow site can still tell a complete story** when every section has a distinct job and all calls to action converge on one next step.
+2. **Proof should precede broad claims.**
+3. **A theme accelerates delivery but creates design debt.** This version shipped efficiently and also made the case for a deeper facelift later.
+4. **Bilingual structure is a system concern**, not a translation task.
