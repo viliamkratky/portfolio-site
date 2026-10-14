@@ -7,8 +7,7 @@ import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  // TODO(owner): replace with the production domain once it is chosen.
-  site: 'https://viliamkratky.com',
+  site: 'https://viliamkratky.dev',
   output: 'static',
   trailingSlash: 'never',
   build: { format: 'file' },

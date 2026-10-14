@@ -16,7 +16,10 @@ interface Props {
 
 const { title, description = site.description, class: className } = Astro.props;
 const pageTitle = title ? `${title} · ${site.name}` : `${site.name} · ${site.role}`;
-const canonical = new URL(Astro.url.pathname.replace(/\.html$/, ''), Astro.site);
+// Static build emits /index.html, /work.html …; canonical URLs use clean paths.
+const cleanPath = Astro.url.pathname.replace(/\.html$/, '').replace(/(^|\/)index$/, '$1') || '/';
+const canonical = new URL(cleanPath, Astro.site);
+const isNotFound = cleanPath === '/404';
 
 // A portfolio without a contact route is not shippable (see site.ts).
 if (import.meta.env.PROD && !site.email && !process.env.ALLOW_MISSING_CONTACT) {
@@ -37,7 +40,7 @@ const routeKeys = routes.map(({ key, href, label }) => ({ key, href, label }));
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonical} />
+    {isNotFound ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="theme-color" content="#FAFAFA" />
     <meta property="og:type" content="website" />

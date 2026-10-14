@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://viliamkratky.com/sitemap-index.xml
+Sitemap: https://viliamkratky.dev/sitemap-index.xml
