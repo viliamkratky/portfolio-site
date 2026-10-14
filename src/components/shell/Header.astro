@@ -1,0 +1,155 @@
+---
+import { routes, site } from '../../config/site';
+import { socialLinks } from '../../lib/social-icons';
+import SocialIcon from '../ui/SocialIcon.astro';
+
+const path = Astro.url.pathname.replace(/\.html$/, '').replace(/\/$/, '') || '/';
+const isCurrent = (href: string) => (href === '/' ? path === '/' : path === href || path.startsWith(`${href}/`));
+const nav = routes.filter((r) => r.inNav);
+const socials = socialLinks(site);
+---
+
+<header id="site-header" class="pointer-events-none fixed inset-x-0 top-0 z-50 text-white mix-blend-difference transition-transform duration-500 ease-out data-[hidden=true]:-translate-y-full">
+  <div class="container-page flex h-(--header-h) items-center justify-between gap-6">
+    <a href="/" class="pointer-events-auto -my-3 py-3 font-display text-[15px] font-semibold tracking-[-0.02em]" aria-label={`${site.name}, home`}>
+      <span class="roll"><span>{site.name}</span><span aria-hidden="true">{site.name}</span></span>
+    </a>
+
+    <nav aria-label="Primary" class="pointer-events-auto hidden items-center gap-8 md:flex">
+      {
+        nav.map((r, i) => (
+          <a href={r.href} aria-current={isCurrent(r.href) ? 'page' : undefined} class="group flex items-baseline gap-1.5 text-[14px]">
+            <span class="t-meta opacity-50 transition-opacity group-aria-[current=page]:opacity-100">{String(i + 1).padStart(2, '0')}</span>
+            <span class="roll">
+              <span>{r.label}</span>
+              <span aria-hidden="true">{r.label}</span>
+            </span>
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="pointer-events-auto flex items-center gap-5">
+      {
+        socials.length > 0 && (
+          <ul class="hidden items-center gap-1 lg:flex" aria-label="Profiles">
+            {socials.map((l) => (
+              <li>
+                <a href={l.href} rel="me noopener" target="_blank" aria-label={l.label} title={l.label} class="grid size-9 place-items-center transition-transform duration-(--dur-2) hover:-translate-y-0.5">
+                  <SocialIcon name={l.name} size={17} />
+                </a>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+      <button type="button" data-theme-toggle class="t-meta hidden sm:inline-flex" aria-label="Toggle dark mode">
+        <span class="roll"><span data-theme-label>Dark</span><span aria-hidden="true" data-theme-label>Dark</span></span>
+      </button>
+      <button
+        type="button"
+        data-menu-open="search"
+        data-js-only
+        hidden
+        class="hidden items-center gap-2 text-[14px] md:inline-flex"
+        aria-label="Open command menu"
+      >
+        <span class="roll"><span>Search</span><span aria-hidden="true">Search</span></span>
+        <span class="t-meta rounded-[4px] border border-white/40 px-1.5 py-0.5">⌘K</span>
+      </button>
+      <button type="button" id="menu-button" class="-mx-3 -my-3 px-3 py-3 text-[14px] md:hidden" aria-haspopup="dialog" aria-controls="mobile-menu">
+        Menu
+      </button>
+    </div>
+  </div>
+</header>
+
+<dialog
+  id="mobile-menu"
+  aria-label="Menu"
+  class="m-0 h-dvh max-h-none w-screen max-w-none bg-bg p-0 text-fg backdrop:bg-transparent open:flex open:flex-col"
+>
+  <div class="container-page flex h-(--header-h) shrink-0 items-center justify-between">
+    <a href="/" class="font-display text-[15px] font-semibold tracking-[-0.02em]">{site.name}</a>
+    <button type="button" data-close class="-mx-3 px-3 py-3 text-[14px]">Close</button>
+  </div>
+  <nav aria-label="Mobile" class="container-page flex flex-1 flex-col justify-center">
+    <ul class="space-y-1">
+      {
+        routes.map((r, i) => (
+          <li>
+            <a href={r.href} aria-current={isCurrent(r.href) ? 'page' : undefined} class="flex items-start gap-3 font-display text-[clamp(3rem,15vw,5rem)] leading-[0.95] font-semibold tracking-[-0.045em] text-fg-3 aria-[current=page]:text-fg">
+              {r.label}
+              <span class="t-meta mt-3 text-accent-ink">{String(i + 1).padStart(2, '0')}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+  {
+    socials.length > 0 && (
+      <ul class="container-page flex gap-3 pb-6" aria-label="Profiles">
+        {socials.map((l) => (
+          <li>
+            <a href={l.href} rel="me noopener" target="_blank" class="inline-flex h-12 items-center gap-2.5 rounded-full border border-line-3 px-5 text-[15px]">
+              <SocialIcon name={l.name} size={18} />
+              {l.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+  <div class="container-page flex items-center justify-between pb-8">
+    <button type="button" data-menu-open="search" data-js-only hidden class="t-meta -my-3 py-3">Search & commands</button>
+    <button type="button" data-theme-toggle class="t-meta -my-3 py-3"><span data-theme-label>Dark</span> mode</button>
+  </div>
+</dialog>
+
+<script>
+  const dialog = document.getElementById('mobile-menu') as HTMLDialogElement;
+  document.getElementById('menu-button')!.addEventListener('click', () => dialog.showModal());
+  dialog.querySelector('[data-close]')!.addEventListener('click', () => dialog.close());
+  dialog.addEventListener('click', (e) => {
+    if ((e.target as HTMLElement).closest('a, [data-menu-open]')) dialog.close();
+  });
+  matchMedia('(min-width: 48rem)').addEventListener('change', (e) => e.matches && dialog.close());
+
+  // Hide while scrolling down through content, reveal on scroll up.
+  const header = document.getElementById('site-header')!;
+  let lastY = scrollY;
+  addEventListener(
+    'scroll',
+    () => {
+      const y = scrollY;
+      if (Math.abs(y - lastY) < 6) return;
+      header.dataset.hidden = String(y > lastY && y > 160 && !header.contains(document.activeElement));
+      lastY = y;
+    },
+    { passive: true },
+  );
+  header.addEventListener('focusin', () => (header.dataset.hidden = 'false'));
+
+  const root = document.documentElement;
+  const sync = () => {
+    const dark = root.dataset.theme === 'dark';
+    document.querySelectorAll('[data-theme-label]').forEach((el) => (el.textContent = dark ? 'Light' : 'Dark'));
+  };
+  sync();
+  document.querySelectorAll('[data-theme-toggle]').forEach((b) =>
+    b.addEventListener('click', () => {
+      const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+      const apply = () => {
+        root.dataset.theme = next;
+        try {
+          localStorage.setItem('vk:theme', next);
+        } catch {}
+        sync();
+      };
+      const d = document as Document & { startViewTransition?: (cb: () => void) => unknown };
+      if (d.startViewTransition && !matchMedia('(prefers-reduced-motion: reduce)').matches) d.startViewTransition(apply);
+      else apply();
+    }),
+  );
+</script>

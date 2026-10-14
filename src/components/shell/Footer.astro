@@ -1,0 +1,96 @@
+---
+import { routes, site } from '../../config/site';
+import { buildInfo } from '../../lib/build-info';
+import { socialIcons } from '../../lib/social-icons';
+
+const external = [
+  site.email && { label: 'Email', href: `mailto:${site.email}` },
+  site.github && { label: 'GitHub', href: site.github, icon: socialIcons.github },
+  site.linkedin && { label: 'LinkedIn', href: site.linkedin, icon: socialIcons.linkedin },
+  site.resume && { label: 'Resume (PDF)', href: site.resume },
+].filter(Boolean) as { label: string; href: string; icon?: string }[];
+
+const updated = new Date(buildInfo.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+---
+
+<footer class="container-page pt-32 pb-10">
+  <!--
+    Layout: stacked on phones; from md the tagline gets its own row and the links
+    sit next to a wide info block; from xl everything shares one row.
+  -->
+  <div class="grid-12 gap-y-12">
+    <p class="col-span-4 font-display text-[22px] leading-tight font-semibold tracking-[-0.02em] md:col-span-12 xl:col-span-4">
+      Design on the surface.<br /><span class="text-fg-3">Engineering underneath.</span>
+    </p>
+    <nav aria-label="Footer" class="col-span-2 md:col-span-3 xl:col-span-2 xl:col-start-5">
+      <ul class="text-[15px]">
+        {
+          routes.map((r) => (
+            <li>
+              <a href={r.href} class="link-underline inline-block py-1.5 md:py-0.5">
+                {r.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    {
+      external.length > 0 && (
+        <ul class="col-span-2 text-[15px] md:col-span-3 xl:col-span-2 xl:col-start-7">
+          {external.map((l) => (
+            <li>
+              <a
+                href={l.href}
+                class="group inline-flex items-center gap-2.5 py-1.5 md:py-0.5"
+                rel={l.href.startsWith('http') ? 'me noopener' : undefined}
+                target={l.href.startsWith('http') || l.href.endsWith('.pdf') ? '_blank' : undefined}
+              >
+                {l.icon && (
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="transition-transform duration-(--dur-2) group-hover:-translate-y-0.5">
+                    <path d={l.icon} />
+                  </svg>
+                )}
+                <span class="link-underline">{l.label}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+    <div class="col-span-4 max-w-[26rem] md:col-span-6 md:col-start-7 md:max-w-none xl:col-span-4 xl:col-start-9">
+      <dl class="t-meta grid grid-cols-[auto_1fr] gap-x-6 gap-y-1.5 text-fg-3">
+        <dt>Based in</dt>
+        <dd class="flex flex-col items-end text-right text-fg">
+          {site.locations.map((l) => <span class="whitespace-nowrap">{l}</span>)}
+        </dd>
+        <dt>Local time</dt>
+        <dd class="text-right whitespace-nowrap text-fg tabular-nums" data-local-time data-tz={site.timeZone}>--:--</dd>
+        <dt>Status</dt>
+        <dd class="text-right whitespace-nowrap text-fg">{site.available ? 'Available for projects' : 'Booked'}</dd>
+        <dt>Updated</dt>
+        <dd class="text-right whitespace-nowrap text-fg">{updated}</dd>
+      </dl>
+      <p class="kbd-hint t-meta pt-4 text-fg-3">Press <span class="kbd">?</span> for shortcuts</p>
+    </div>
+  </div>
+  <div class="t-meta mt-24 flex items-end justify-between text-fg-3">
+    <span>© {new Date().getFullYear()} {site.name}</span>
+    <span class="t-dot text-[13px] text-fg" aria-hidden="true">EOF</span>
+  </div>
+</footer>
+
+<script>
+  const el = document.querySelector<HTMLElement>('[data-local-time]');
+  if (el) {
+    const fmt = new Intl.DateTimeFormat('en-GB', {
+      timeZone: el.dataset.tz,
+      hour: '2-digit',
+      minute: '2-digit',
+      timeZoneName: 'short',
+    });
+    const tick = () => (el.textContent = fmt.format(new Date()));
+    tick();
+    setInterval(tick, 30_000);
+  }
+</script>

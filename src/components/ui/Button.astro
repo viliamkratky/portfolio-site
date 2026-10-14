@@ -1,0 +1,26 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+
+type Props = HTMLAttributes<'a'> & {
+  href: string;
+  variant?: 'primary' | 'secondary';
+  arrow?: boolean;
+};
+
+const { href, variant = 'primary', arrow = false, class: className, ...rest } = Astro.props;
+const label = Astro.slots.has('default') ? await Astro.slots.render('default') : '';
+---
+
+<a
+  href={href}
+  class:list={[
+    'inline-flex h-12 items-center gap-3 rounded-full px-6 text-[15px] font-medium transition-colors duration-(--dur-2)',
+    variant === 'primary' ? 'bg-fg text-bg hover:bg-accent hover:text-white' : 'border border-line-3 hover:border-fg',
+    className,
+  ]}
+  data-magnet="0.15"
+  {...rest}
+>
+  <span class="roll"><span set:html={label} /><span aria-hidden="true" set:html={label} /></span>
+  {arrow && <span class="nudge" aria-hidden="true">→</span>}
+</a>

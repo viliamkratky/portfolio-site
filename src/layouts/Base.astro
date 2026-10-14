@@ -1,0 +1,110 @@
+---
+import '../styles/global.css';
+import { getCollection } from 'astro:content';
+import { routes, site } from '../config/site';
+import { buildInfo } from '../lib/build-info';
+import Header from '../components/shell/Header.astro';
+import Footer from '../components/shell/Footer.astro';
+import CommandMenu from '../interactive/CommandMenu';
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** Extra classes on <main>. */
+  class?: string;
+}
+
+const { title, description = site.description, class: className } = Astro.props;
+const pageTitle = title ? `${title} · ${site.name}` : `${site.name} · ${site.role}`;
+const canonical = new URL(Astro.url.pathname.replace(/\.html$/, ''), Astro.site);
+
+// A portfolio without a contact route is not shippable (see site.ts).
+if (import.meta.env.PROD && !site.email && !process.env.ALLOW_MISSING_CONTACT) {
+  throw new Error('site.email is empty. Fill it in src/config/site.ts (or set ALLOW_MISSING_CONTACT=1 for a preview build).');
+}
+
+const projects = (await getCollection('work'))
+  .sort((a, b) => a.data.order - b.data.order)
+  .map((p) => ({ slug: p.id, title: p.data.title, type: p.data.type, hasPage: p.data.hasPage, year: p.data.year, period: p.data.period }));
+
+const routeKeys = routes.map(({ key, href, label }) => ({ key, href, label }));
+---
+
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" content="#FAFAFA" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={new URL('/og.png', Astro.site)} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta name="generator" content={Astro.generator} />
+    <script is:inline>
+      try {
+        if (localStorage.getItem('vk:keys') === 'off') document.documentElement.dataset.keys = 'off';
+        if (localStorage.getItem('vk:theme') === 'dark') document.documentElement.dataset.theme = 'dark';
+      } catch (e) {}
+    </script>
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'Person',
+        name: site.name,
+        jobTitle: site.role,
+        url: Astro.site?.toString(),
+        sameAs: [site.github, site.linkedin].filter(Boolean),
+      })}
+    />
+  </head>
+  <body>
+    <a
+      href="#main"
+      class="fixed top-2 left-2 z-[100] -translate-y-20 rounded-md bg-fg px-3 py-2 text-[14px] text-bg focus:translate-y-0"
+      >Skip to content</a
+    >
+    <Header />
+    <main id="main" tabindex="-1" class:list={['relative outline-none', className]}>
+      <slot />
+    </main>
+    <Footer />
+
+    <div class="grid-overlay" aria-hidden="true">
+      <div class="container-page grid-12"><span></span><span></span><span></span><span></span><span class="hidden md:block"></span><span class="hidden md:block"></span><span class="hidden md:block"></span><span class="hidden md:block"></span><span class="hidden md:block"></span><span class="hidden md:block"></span><span class="hidden md:block"></span><span class="hidden md:block"></span></div>
+    </div>
+
+    <div
+      id="status-line"
+      role="status"
+      aria-live="polite"
+      data-visible="false"
+      class="t-meta pointer-events-none fixed bottom-4 left-4 z-[90] rounded-full bg-fg px-3.5 py-2 text-bg opacity-0 transition-[opacity,transform] duration-(--dur-2) data-[visible=true]:translate-y-0 data-[visible=true]:opacity-100 translate-y-1"
+    >
+    </div>
+
+    <script type="application/json" id="route-keys" set:html={JSON.stringify(routeKeys)} />
+    <CommandMenu
+      client:idle
+      routes={routes}
+      projects={projects}
+      links={{ email: site.email, github: site.github, linkedin: site.linkedin, resume: site.resume }}
+      build={buildInfo}
+      name={site.name}
+    />
+    <script>
+      import '../interactive/keys';
+      import '../interactive/motion';
+    </script>
+  </body>
+</html>
