@@ -11,6 +11,14 @@ Read `docs/AGENT_INSTRUCTIONS.md` first, then `docs/DESIGN_SYSTEM.md`, `docs/INT
 Start the dev server in background mode: `npx astro dev --background`
 (`astro dev stop`, `astro dev status`, `astro dev logs`).
 
+## Git workflow
+
+Pushing to `main` deploys to production (Cloudflare Pages), so never commit or push directly to `main`.
+
+1. Create a branch from `main` before making any change.
+2. Commit there and test it (`npx astro build`, then check the result in the dev server or a preview).
+3. Merge into `main` only after the change is verified to work.
+
 ## Rules that are easy to break
 
 - Colours, type, spacing and motion come from tokens in `src/styles/global.css`. Do not add raw hex values in components.
