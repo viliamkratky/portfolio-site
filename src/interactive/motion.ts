@@ -183,7 +183,7 @@ function setupCursorCard() {
 
   const dither = (source: HTMLImageElement) => {
     const w = 160;
-    const h = 100;
+    const h = Math.round((w * source.naturalHeight) / source.naturalWidth);
     canvas.width = w;
     canvas.height = h;
     const c = canvas.getContext('2d')!;
@@ -207,6 +207,7 @@ function setupCursorCard() {
       clearTimeout(timer);
       card.classList.remove('resolved');
       card.classList.add('on');
+      card.style.aspectRatio = row.dataset.previewRatio ?? '';
       const src = row.dataset.preview;
       if (src) {
         empty.textContent = '';
@@ -335,15 +336,19 @@ function setupTerminal() {
 
 /* -------------------------------------------------------------- magnet --- */
 
+const MAGNET_MAX = 24;
+
 function setupMagnets() {
   if (!finePointer) return;
   document.querySelectorAll<HTMLElement>('[data-magnet]').forEach((m) => {
     const strength = Number(m.dataset.magnet || 0.3);
+    // Capped travel: a large target must not drift over its neighbours and steal their clicks.
+    const pull = (d: number) => Math.max(-MAGNET_MAX, Math.min(MAGNET_MAX, d));
     m.addEventListener('pointermove', (e) => {
       const r = m.getBoundingClientRect();
       gsap.to(m, {
-        x: (e.clientX - (r.left + r.width / 2)) * strength,
-        y: (e.clientY - (r.top + r.height / 2)) * strength * 1.3,
+        x: pull((e.clientX - (r.left + r.width / 2)) * strength),
+        y: pull((e.clientY - (r.top + r.height / 2)) * strength * 1.3),
         duration: 0.6,
         ease: 'power3.out',
       });

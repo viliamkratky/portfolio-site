@@ -22,6 +22,7 @@ const items = await Promise.all(
             href={p.data.hasPage ? `/work/${p.id}` : undefined}
             class="work-row group grid grid-cols-[3ch_1fr] items-baseline gap-x-4 gap-y-2 py-[1.6vh] md:grid-cols-[4ch_1fr] md:gap-x-6 xl:grid-cols-[4ch_1fr_auto]"
             data-preview={preview}
+            data-preview-ratio={p.data.cover ? `${p.data.cover.width} / ${p.data.cover.height}` : undefined}
             data-preview-label={`${p.data.title}\n${p.data.hasPage ? 'Case study →' : 'Case study soon'}`}
           >
             <span class="t-meta text-fg-3">{String(i + 1).padStart(2, '0')}</span>
@@ -95,6 +96,7 @@ const items = await Promise.all(
     left: 0;
     top: 0;
     width: clamp(260px, 26vw, 420px);
+    /* Default for text-only cards; image previews take the cover's own ratio (motion.ts). */
     aspect-ratio: 16 / 10;
     pointer-events: none;
     opacity: 0;
