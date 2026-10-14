@@ -19,7 +19,7 @@ export const site = {
   github: 'https://github.com/viliamkratky' as string,
   linkedin: 'https://www.linkedin.com/in/viliam-kr%C3%A1tky-85b753279/' as string,
   /** Resume PDF in /public (public version, without a phone number), or empty to hide. */
-  resume: '/viliam-kratky-cv.pdf' as string,
+  resume: '/viliam-kratky-resume.pdf' as string,
 
   /** Shown in the footer. Split week between the two cities (same time zone). */
   locations: ['Bratislava, Slovakia', 'Brno, Czech Republic'],
