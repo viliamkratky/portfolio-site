@@ -1,0 +1,35 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Hero from '../components/home/Hero.astro';
+import Story from '../components/home/Story.astro';
+import WorkIndex from '../components/work/WorkIndex.astro';
+import Terminal from '../components/home/Terminal.astro';
+import ContactBlock from '../components/home/ContactBlock.astro';
+
+const count = (await getCollection('work')).length;
+---
+
+<Base>
+  <Hero />
+  <Story />
+
+  <section id="work" aria-labelledby="work-title" class="py-[22vh]">
+    <div class="container-page">
+      <div class="t-meta flex justify-between text-fg-3" data-nav-item="Selected work">
+        <h2 id="work-title" class="text-fg">Selected work</h2>
+        <span>{String(count).padStart(2, '0')} projects</span>
+      </div>
+      <p class="t-display mt-[8vh] mb-[12vh] max-w-[14ch]" data-reveal>
+        {'Evidence, not claims.'.split(' ').map((w) => <><span class="mask"><span class="word">{w}</span></span> </>)}
+      </p>
+      <WorkIndex />
+    </div>
+  </section>
+
+  <Terminal />
+
+  <section id="contact" aria-label="Contact" data-nav-item="Contact">
+    <ContactBlock />
+  </section>
+</Base>

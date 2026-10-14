@@ -1,0 +1,139 @@
+---
+import { getCollection } from 'astro:content';
+import { getImage } from 'astro:assets';
+
+/** Oversized project names; the preview follows the cursor (fine pointers only). */
+const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.order);
+const items = await Promise.all(
+  work.map(async (p) => ({
+    p,
+    preview: p.data.cover ? (await getImage({ src: p.data.cover, width: 960, format: 'webp' })).src : '',
+  })),
+);
+---
+
+<ol class="work-list">
+  {
+    items.map(({ p, preview }, i) => {
+      const Tag = p.data.hasPage ? 'a' : 'div';
+      return (
+        <li id={p.id} class="scroll-mt-32" data-nav-item={p.data.title}>
+          <Tag
+            href={p.data.hasPage ? `/work/${p.id}` : undefined}
+            class="work-row group grid grid-cols-[3ch_1fr] items-baseline gap-x-4 gap-y-2 py-[1.6vh] md:grid-cols-[4ch_1fr] md:gap-x-6 xl:grid-cols-[4ch_1fr_auto]"
+            data-preview={preview}
+            data-preview-label={`${p.data.title}\n${p.data.hasPage ? 'Case study →' : 'Case study soon'}`}
+          >
+            <span class="t-meta text-fg-3">{String(i + 1).padStart(2, '0')}</span>
+            <span class="work-title font-display text-[clamp(2.5rem,1rem+7vw,9.5rem)] leading-[0.9] font-semibold tracking-[-0.04em]">
+              <span style={p.data.hasPage ? `view-transition-name: title-${p.id}` : undefined}>{p.data.title}</span>
+            </span>
+            <span class="work-meta t-meta col-start-2 text-fg-3 xl:col-start-auto xl:text-right">
+              {p.data.year} · {p.data.type}
+              {!p.data.hasPage && <span class="block text-accent-ink">Case study soon</span>}
+            </span>
+          </Tag>
+        </li>
+      );
+    })
+  }
+</ol>
+
+<div class="cursor-card" data-cursor-card aria-hidden="true">
+  <canvas></canvas>
+  <img alt="" />
+  <div data-empty class="t-dot"></div>
+</div>
+
+<style>
+  .work-title {
+    min-width: 0;
+    font-stretch: 100%;
+    transition:
+      font-stretch 650ms var(--ease-out),
+      font-weight 650ms var(--ease-out),
+      opacity 350ms var(--ease-out);
+  }
+  @media (min-width: 48rem) and (any-hover: hover) {
+    /* Never wrap: the size is fitted to the stretched hover state (motion.ts),
+       so hovering cannot push a title onto a second line. */
+    .work-title {
+      white-space: nowrap;
+    }
+  }
+  @media (any-hover: hover) {
+    .work-list:hover .work-title {
+      opacity: 0.16;
+    }
+    .work-row:hover .work-title,
+    .work-row:focus-visible .work-title {
+      opacity: 1;
+      font-stretch: 125%;
+      font-weight: 800;
+    }
+  }
+  @media (hover: none) {
+    .work-list[data-focus] .work-title {
+      opacity: 0.16;
+    }
+    .work-list[data-focus] .work-row[data-active] .work-title {
+      opacity: 1;
+    }
+    .work-row[data-active] .work-meta {
+      color: var(--accent-ink);
+    }
+  }
+  .work-meta {
+    transition: color 300ms;
+  }
+  .work-row:hover .work-meta {
+    color: var(--accent-ink);
+  }
+  .cursor-card {
+    position: fixed;
+    z-index: 40;
+    left: 0;
+    top: 0;
+    width: clamp(260px, 26vw, 420px);
+    aspect-ratio: 16 / 10;
+    pointer-events: none;
+    opacity: 0;
+    overflow: hidden;
+    background: var(--invert);
+    transition: opacity 300ms var(--ease-out);
+  }
+  .cursor-card:global(.on) {
+    opacity: 1;
+  }
+  .cursor-card > * {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .cursor-card canvas {
+    image-rendering: pixelated;
+  }
+  .cursor-card img {
+    opacity: 0;
+    transition: opacity 500ms var(--ease-out);
+  }
+  .cursor-card:global(.resolved) img {
+    opacity: 1;
+  }
+  .cursor-card [data-empty] {
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    color: var(--bg);
+    font-size: clamp(18px, 1.6vw, 26px);
+    text-align: center;
+    white-space: pre-line;
+  }
+  @media (pointer: coarse) {
+    .cursor-card {
+      display: none;
+    }
+  }
+</style>

@@ -1,0 +1,26 @@
+---
+/**
+ * Scrollytelling: what I do, told in two beats. A halftone field
+ * grows from the bottom and turns the page from light to dark between them.
+ */
+const first = ['From', 'an', 'unclear', 'problem.'];
+const second = ['To', 'a', 'working', 'system.'];
+---
+
+<section class="story relative grid h-svh place-items-center overflow-hidden" data-story aria-label="From an unclear problem to a working system.">
+  <canvas class="absolute inset-0 h-full w-full" aria-hidden="true"></canvas>
+  <p class="s1 t-mega container-page absolute text-center" aria-hidden="true">
+    {first.map((w) => <><span class="mask"><span class="word">{w}</span></span>{' '}</>)}
+  </p>
+  <p class="s2 t-mega container-page absolute text-center text-bg" aria-hidden="true">
+    {second.map((w) => <><span class="mask"><span class="word">{w}</span></span>{' '}</>)}
+  </p>
+</section>
+
+<style>
+  @media (prefers-reduced-motion: reduce) {
+    .s1 {
+      display: none;
+    }
+  }
+</style>

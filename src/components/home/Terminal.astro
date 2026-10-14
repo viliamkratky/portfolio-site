@@ -1,0 +1,70 @@
+---
+import { site, stack } from '../../config/site';
+
+/**
+ * The terminal scene. Outputs are real: identity, the `:stack` list from
+ * site config, the five capability areas and the availability flag.
+ */
+const stackLine = stack.flatMap((g) => g.items.slice(0, 2)).join(' · ').toLowerCase();
+const services = ['web-products', 'interface-engineering', 'content-platforms', 'ai-software', 'prototypes-mvps'];
+---
+
+<section class="terminal bg-black text-[#fafafa]" aria-labelledby="terminal-title">
+  <div class="container-page py-[22vh]">
+    <h2 id="terminal-title" class="t-meta text-[#8f8f8f]">What I do, in plain text</h2>
+    <div class="term mt-[10vh]" data-term>
+      <p data-line="$ whoami">{site.name.toLowerCase()}, design-minded full-stack engineer</p>
+      <p data-line="$ ls ./services">{services.map((s) => <span class="mr-[1.2ch] inline-block">{s}/</span>)}</p>
+      <p data-line="$ stack --short">{stackLine}</p>
+      <p data-line="$ status">
+        {site.available ? <><span class="text-[#00d816]">●</span> available for new projects</> : 'currently booked'}
+      </p>
+    </div>
+    <div class="mt-[10vh] flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+      <p class="max-w-[22ch] font-display text-[clamp(1.75rem,1rem+2.4vw,3rem)] leading-[1] font-semibold tracking-[-0.03em]">
+        In plain English: <span class="text-[#8f8f8f]">what I can build for you.</span>
+      </p>
+      <a
+        href="/services"
+        class="group inline-flex h-14 w-fit shrink-0 items-center gap-3 rounded-full bg-[#fafafa] px-7 text-[16px] font-medium text-black transition-colors duration-(--dur-2) hover:bg-accent hover:text-white"
+        data-magnet="0.15"
+      >
+        <span class="roll"><span>Explore services</span><span aria-hidden="true">Explore services</span></span>
+        <span class="nudge" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .term {
+    font-family: var(--font-mono);
+    font-size: clamp(15px, 0.6rem + 1.6vw, 30px);
+    line-height: 1.45;
+    font-stretch: 87.5%;
+  }
+  .term :global(p) {
+    margin-bottom: 1.4em;
+    min-height: 2.9em;
+  }
+  .term :global(.term-prompt) {
+    display: block;
+    color: #00d816;
+  }
+  .term :global(.term-caret) {
+    display: inline-block;
+    width: 0.6em;
+    height: 1.05em;
+    background: #00d816;
+    vertical-align: -0.15em;
+    animation: blink 1s steps(1) infinite;
+  }
+  @keyframes blink {
+    50% {
+      opacity: 0;
+    }
+  }
+  :global(:root[data-theme='dark']) .terminal {
+    background: #0a0a0a;
+  }
+</style>

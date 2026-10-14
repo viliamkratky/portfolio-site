@@ -1,0 +1,54 @@
+---
+import { site } from '../../config/site';
+---
+
+<section id="intro" class="relative flex min-h-svh flex-col pt-(--header-h)" aria-labelledby="hero-title">
+  <div class="container-page flex flex-1 flex-col justify-center py-[8vh]" data-nav-item="Intro">
+    <p class="flex flex-wrap items-baseline gap-x-4 gap-y-2">
+      <span class="size-[9px] self-center bg-accent" aria-hidden="true"></span>
+      <span class="text-[15px] font-semibold tracking-[-0.01em]">{site.role}</span>
+      <span class="t-meta text-fg-3">
+        Portfolio ’{new Date().getFullYear().toString().slice(2)}{site.available && ' · Available for new projects'}
+      </span>
+    </p>
+
+    <h1 id="hero-title" class="mt-[2vh]" aria-label={site.name}>
+      <span class="kinetic fit display hero-name hidden sm:block" data-kinetic data-rest="560" data-fit="0.97">{site.name.toUpperCase()}</span>
+      {site.name.toUpperCase().split(' ').map((part) => (
+        <span class="kinetic fit display hero-name sm:hidden" data-kinetic data-rest="560" data-fit="0.97">{part}</span>
+      ))}
+    </h1>
+
+    <div class="mt-[4vh] flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
+      <p class="hero-line font-display md:shrink-0" data-reveal>
+        {'Design on the surface. Engineering underneath.'.split(' ').map((w) => <><span class="mask"><span class="word">{w}</span></span> </>)}
+      </p>
+      <p class="max-w-[34ch] text-[clamp(1.0625rem,0.9rem+0.5vw,1.375rem)] leading-[1.45] text-fg-3 md:max-w-[30ch] md:shrink" data-reveal>
+        I take digital products from an unclear problem to a polished, working system: interface, frontend, backend, AI
+        and the infrastructure that ships it.
+      </p>
+    </div>
+  </div>
+
+  <div class="container-page t-meta flex items-center justify-between pb-7 text-fg-3">
+    <span>01 / Index</span>
+    <a href="#work" class="-my-3 py-3 text-fg">Scroll ↓</a>
+  </div>
+</section>
+
+<style>
+  .hero-name {
+    line-height: 0.82;
+    letter-spacing: -0.035em;
+  }
+  .hero-name + .hero-name {
+    margin-top: 0.16em;
+  }
+  .hero-line {
+    font-size: clamp(1.75rem, 0.8rem + 3.6vw, 4rem);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    font-weight: 500;
+    max-width: 14ch;
+  }
+</style>

@@ -1,0 +1,67 @@
+---
+import { site } from '../../config/site';
+import { socialLinks } from '../../lib/social-icons';
+import SocialIcon from '../ui/SocialIcon.astro';
+
+interface Props {
+  as?: 'h1' | 'h2';
+}
+const { as: Heading = 'h2' } = Astro.props;
+const href = site.email ? `mailto:${site.email}` : '/contact';
+const socials = socialLinks(site);
+---
+
+<div class="container-page flex min-h-svh flex-col items-center justify-center gap-[6vh] py-24 text-center">
+  <Heading class="t-meta text-fg-3">Have an ambiguous problem worth solving?</Heading>
+  <a href={href} class="t-mega inline-flex items-baseline gap-[0.25em]" data-magnet="0.25">
+    <span>Let’s talk</span><span class="text-accent">→</span>
+  </a>
+  <div class="flex flex-col items-center gap-4">
+    {
+      site.email ? (
+        <div class="flex items-center gap-4">
+          <a href={href} class="link-underline t-lead">{site.email}</a>
+          <button type="button" data-copy={site.email} data-copy-label="email address" data-js-only hidden class="t-meta group rounded-full bg-fg px-3 py-1.5 text-bg">
+            <span class="group-data-[copied]:hidden">Copy</span>
+            <span class="hidden group-data-[copied]:inline">Copied ✓</span>
+          </button>
+        </div>
+      ) : (
+        import.meta.env.DEV && <p class="t-meta text-accent-ink">TODO(owner): set site.email in src/config/site.ts</p>
+      )
+    }
+    {
+      (socials.length > 0 || site.resume) && (
+        <ul class="flex flex-wrap items-center justify-center gap-3">
+          {socials.map((l) => (
+            <li>
+              <a
+                href={l.href}
+                rel="me noopener"
+                target="_blank"
+                class="inline-flex h-12 items-center gap-2.5 rounded-full border border-line-3 px-5 text-[15px] transition-colors duration-(--dur-2) hover:border-fg hover:bg-fg hover:text-bg"
+                data-magnet="0.2"
+              >
+                <SocialIcon name={l.name} size={18} />
+                {l.label}
+              </a>
+            </li>
+          ))}
+          {site.resume && (
+            <li>
+              <a
+                href={site.resume}
+                target="_blank"
+                class="inline-flex h-12 items-center gap-2.5 rounded-full border border-line-3 px-5 text-[15px] transition-colors duration-(--dur-2) hover:border-fg hover:bg-fg hover:text-bg"
+                data-magnet="0.2"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg>
+                Resume (PDF)
+              </a>
+            </li>
+          )}
+        </ul>
+      )
+    }
+  </div>
+</div>
