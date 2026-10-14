@@ -6,6 +6,7 @@ import { buildInfo } from '../lib/build-info';
 import Header from '../components/shell/Header.astro';
 import Footer from '../components/shell/Footer.astro';
 import CommandMenu from '../interactive/CommandMenu';
+import ContactDialog from '../components/contact/ContactDialog.astro';
 
 interface Props {
   title?: string;
@@ -84,6 +85,7 @@ const routeKeys = routes.map(({ key, href, label }) => ({ key, href, label }));
       <slot />
     </main>
     <Footer />
+    <ContactDialog />
 
     <div class="grid-overlay" aria-hidden="true">
       <div class="container-page grid-12"><span></span><span></span><span></span><span></span><span class="hidden md:block"></span><span class="hidden md:block"></span><span class="hidden md:block"></span><span class="hidden md:block"></span><span class="hidden md:block"></span><span class="hidden md:block"></span><span class="hidden md:block"></span><span class="hidden md:block"></span></div>

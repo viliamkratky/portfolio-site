@@ -13,7 +13,8 @@
     "preview": "astro preview",
     "check": "astro check",
     "format": "prettier --write .",
-    "astro": "astro"
+    "astro": "astro",
+    "preview:pages": "astro build && wrangler pages dev dist"
   },
   "dependencies": {
     "@astrojs/mdx": "^8.0.3",
@@ -46,6 +47,7 @@
     "prettier": "^3.9.10",
     "prettier-plugin-astro": "^1.1.1",
     "prettier-plugin-tailwindcss": "^0.8.1",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "wrangler": "^4.151.0"
   }
 }

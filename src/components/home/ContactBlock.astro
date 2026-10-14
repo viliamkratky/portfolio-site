@@ -2,6 +2,7 @@
 import { site } from '../../config/site';
 import { socialLinks } from '../../lib/social-icons';
 import SocialIcon from '../ui/SocialIcon.astro';
+import { contactFormEnabled } from '../../lib/turnstile';
 
 interface Props {
   as?: 'h1' | 'h2';
@@ -9,11 +10,19 @@ interface Props {
 const { as: Heading = 'h2' } = Astro.props;
 const href = site.email ? `mailto:${site.email}` : '/contact';
 const socials = socialLinks(site);
+// With JS the CTA opens the contact dialog; without JS it stays a mailto: link.
+const opensDialog = contactFormEnabled && Boolean(site.email);
 ---
 
 <div class="container-page flex min-h-svh flex-col items-center justify-center gap-[6vh] py-24 text-center">
   <Heading class="t-meta text-fg-3">Have an ambiguous problem worth solving?</Heading>
-  <a href={href} class="t-mega inline-flex items-baseline gap-[0.25em]" data-magnet="0.25">
+  <a
+    href={href}
+    class="t-mega inline-flex items-baseline gap-[0.25em]"
+    data-magnet="0.25"
+    data-contact-open={opensDialog ? '' : undefined}
+    aria-haspopup={opensDialog ? 'dialog' : undefined}
+  >
     <span>Let’s talk</span><span class="text-accent">→</span>
   </a>
   <div class="relative z-10 flex flex-col items-center gap-4">

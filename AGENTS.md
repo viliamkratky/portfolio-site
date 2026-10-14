@@ -11,6 +11,10 @@ Read `docs/AGENT_INSTRUCTIONS.md` first, then `docs/DESIGN_SYSTEM.md`, `docs/INT
 Start the dev server in background mode: `npx astro dev --background`
 (`astro dev stop`, `astro dev status`, `astro dev logs`).
 
+`astro dev` does not run `functions/` (the contact endpoint). To test it, copy `.dev.vars.example` to `.dev.vars` and
+run `PUBLIC_TURNSTILE_SITE_KEY=1x00000000000000000000AA npm run preview:pages` (port 8788, Turnstile test keys,
+messages logged instead of sent). Never put production keys in `.dev.vars` or in the repository.
+
 ## Git workflow
 
 Pushing to `main` deploys to production (Cloudflare Pages), so never commit or push directly to `main`.
