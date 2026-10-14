@@ -1,0 +1,17 @@
+---
+import Base from '../layouts/Base.astro';
+import Button from '../components/ui/Button.astro';
+---
+
+<Base title="Not found">
+  <section class="container-page flex min-h-svh flex-col justify-center pt-(--header-h)">
+    <p class="t-mono text-fg-3"><span class="text-[#00b512]">$</span> open this-page</p>
+    <h1 class="kinetic fit display mt-6" data-kinetic data-rest="600" data-fit="0.9">404</h1>
+    <p class="t-lead mt-6 font-mono">command not found</p>
+    <p class="mt-4 max-w-[44ch] text-fg-2">The page you asked for doesn’t exist. It may have moved. Everything that does exist is one step away.</p>
+    <div class="mt-10 flex flex-wrap gap-3">
+      <Button href="/" arrow>Home</Button>
+      <Button href="/work" variant="secondary">Work</Button>
+    </div>
+  </section>
+</Base>

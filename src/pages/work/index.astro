@@ -1,0 +1,25 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import WorkIndex from '../../components/work/WorkIndex.astro';
+import ContactBlock from '../../components/home/ContactBlock.astro';
+
+const work = await getCollection('work');
+const pages = work.filter((p) => p.data.hasPage).length;
+---
+
+<Base title="Work" description="Selected work: shipped products and case studies, with the role stated precisely.">
+  <section class="container-page pt-[calc(var(--header-h)+18vh)] pb-[14vh]">
+    <p class="t-meta text-fg-3" data-nav-item="Work">Index · {work.length} projects · {pages} case studies</p>
+    <h1 class="kinetic fit display mt-[6vh]" data-kinetic data-rest="600" data-fit="0.9">WORK</h1>
+    <p class="t-lead mt-[6vh] max-w-[36ch] text-fg-2">
+      Products I designed, built or helped ship, each with my role stated precisely, including what I did not do.
+    </p>
+  </section>
+  <section class="container-page pb-[16vh]" aria-label="Projects">
+    <WorkIndex />
+  </section>
+  <section aria-label="Contact">
+    <ContactBlock />
+  </section>
+</Base>

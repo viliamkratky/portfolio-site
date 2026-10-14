@@ -1,0 +1,127 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import ContactBlock from '../components/home/ContactBlock.astro';
+
+const work = await getCollection('work');
+const byId = Object.fromEntries(work.map((p) => [p.id, p]));
+
+const capabilities = [
+  {
+    area: 'Web products',
+    outcome: 'A complete web product, not just a website.',
+    body: 'Information architecture, interface design, frontend, CMS or backend and deployment, owned end to end by someone who cares how it looks and how it runs.',
+    evidence: ['excolabs', 'portfolio'],
+  },
+  {
+    area: 'Interface engineering',
+    outcome: 'Dense, complex interfaces that feel simple.',
+    body: 'For products whose backend already exists: data-heavy UI, filters and search, design systems, motion, accessibility and frontend performance.',
+    evidence: ['medical-navigator', 'portfolio'],
+  },
+  {
+    area: 'Content platforms',
+    outcome: 'Content platforms editors can actually live in.',
+    body: 'Structured content, multilingual setups, search and facets, migrations and custom themes. Deep Drupal experience, but the tool is not the point.',
+    evidence: ['medical-navigator', 'excolabs'],
+  },
+  {
+    area: 'AI-enabled software',
+    outcome: 'AI where it does real work.',
+    body: 'Semantic search, extraction, classification and agent workflows built into software people already use, with local models when data has to stay in-house.',
+    evidence: ['decision-watchdog'],
+  },
+  {
+    area: 'Prototypes & MVPs',
+    outcome: 'An uncertain idea, turned into something you can test.',
+    body: 'Technical research, architecture and a working prototype that reduces risk before the larger investment, on foundations that survive into production.',
+    evidence: ['decision-watchdog', 'portfolio'],
+  },
+];
+
+const path = ['Problem', 'Requirements', 'UX & structure', 'Visual design', 'Frontend', 'Backend', 'AI', 'Infrastructure', 'Iteration'];
+
+const fit = [
+  'A software team that needs frontend and interface engineering with real design judgement.',
+  'A company rebuilding or modernising a content-heavy web platform.',
+  'A startup that needs an idea turned into a testable MVP on solid foundations.',
+  'A product that should gain AI features that do real work, not demos.',
+  'A business that wants a complete, high-quality web product from one person.',
+];
+---
+
+<Base title="Services" description="Web products, interface engineering, content platforms, AI-enabled software and MVPs, from interface to infrastructure.">
+  <section class="container-page pt-[calc(var(--header-h)+18vh)] pb-[16vh]">
+    <p class="t-meta text-fg-3" data-nav-item="Services">Services · design + engineering</p>
+    <h1 class="kinetic fit display mt-[6vh]" data-kinetic data-rest="600" data-fit="0.92">SERVICES</h1>
+    <p class="t-lead mt-[6vh] max-w-[38ch] text-fg-2">
+      One engineer, from interface to infrastructure. Design, engineering and delivery from one person. Fewer handoffs,
+      and decisions that hold up across the whole stack.
+    </p>
+  </section>
+
+  <section aria-label="Capabilities" class="container-page pb-[16vh]">
+    <ol class="space-y-[14vh]">
+      {
+        capabilities.map((c, i) => (
+          <li class="grid-12 gap-y-6" data-nav-item={c.area}>
+            <p class="t-meta col-span-4 text-fg-3 md:col-span-3">
+              <span class="text-accent-ink">{String(i + 1).padStart(2, '0')}</span> / {c.area}
+            </p>
+            <div class="col-span-4 md:col-span-9">
+              <h2 class="t-h2 max-w-[18ch]" data-reveal>
+                {c.outcome.split(' ').map((w) => <><span class="mask"><span class="word">{w}</span></span> </>)}
+              </h2>
+              <p class="mt-6 max-w-[56ch] text-[18px] text-fg-2">{c.body}</p>
+              <p class="t-meta mt-6 flex flex-wrap gap-x-5 gap-y-2 text-fg-3">
+                <span>Evidence</span>
+                {c.evidence.filter((id) => byId[id]).map((id) => (
+                  <a href={byId[id].data.hasPage ? `/work/${id}` : `/work#${id}`} class="link-underline text-fg">
+                    {byId[id].data.title} ↗
+                  </a>
+                ))}
+              </p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section aria-labelledby="path-title" class="bg-black py-[20vh] text-[#fafafa]">
+    <div class="container-page">
+      <h2 id="path-title" class="t-meta text-[#8f8f8f]">How I work: the whole path</h2>
+      <ol class="mt-[8vh] font-display text-[clamp(2rem,1rem+4vw,5.5rem)] leading-[1] font-semibold tracking-[-0.04em]">
+        {
+          path.map((p, i) => (
+            <li class="flex items-baseline gap-4" data-reveal>
+              <span class="t-meta w-8 shrink-0 text-[#8f8f8f]">{String(i + 1).padStart(2, '0')}</span>
+              {p}
+            </li>
+          ))
+        }
+      </ol>
+      <p class="t-lead mt-[8vh] max-w-[42ch] text-[#bdbdbd]">
+        Most projects need several specialists and a few handoffs. I work across the whole path, so decisions made in the
+        interface still make sense in the infrastructure.
+      </p>
+    </div>
+  </section>
+
+  <section aria-labelledby="fit-title" class="container-page py-[20vh]">
+    <h2 id="fit-title" class="t-meta text-fg-3" data-nav-item="Project fit">Where I’m most useful</h2>
+    <ul class="mt-[8vh] space-y-8">
+      {
+        fit.map((f) => (
+          <li class="t-h3 max-w-[30ch]" data-reveal>
+            {f}
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section aria-label="Contact">
+    <ContactBlock />
+  </section>
+</Base>

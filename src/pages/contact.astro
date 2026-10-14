@@ -1,0 +1,32 @@
+---
+import Base from '../layouts/Base.astro';
+import ContactBlock from '../components/home/ContactBlock.astro';
+
+const include = [
+  ['Context', 'Who you are, the product and where it stands today.'],
+  ['Problem', 'What is not working, or what needs to exist.'],
+  ['Outcome', 'What a good result looks like, and by when.'],
+];
+---
+
+<Base title="Contact" description="Get in touch about a product, an interface or a platform.">
+  <div class="pt-(--header-h)" data-nav-item="Contact">
+    <ContactBlock as="h1" />
+  </div>
+  <section aria-labelledby="include-title" class="container-page pb-[16vh]">
+    <h2 id="include-title" class="t-meta text-fg-3">What helps in a first message</h2>
+    <dl class="mt-[6vh] grid gap-10 md:grid-cols-3">
+      {
+        include.map(([k, v], i) => (
+          <div>
+            <dt class="t-h3">
+              <span class="t-meta mr-3 align-middle text-accent-ink">{String(i + 1).padStart(2, '0')}</span>
+              {k}
+            </dt>
+            <dd class="mt-3 max-w-[30ch] text-[17px] text-fg-2">{v}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </section>
+</Base>
