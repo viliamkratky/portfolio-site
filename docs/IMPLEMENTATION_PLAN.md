@@ -1,6 +1,6 @@
 # Implementation Plan
 
-> **Update 2026-10-14:** the stack decision (§4.1, §4.3, §4.4) was superseded — the site is built with Astro + React islands + Tailwind v4. See `docs/BUILD_LOG.md`.
+> **Update 2026-10-14:** the stack decision (§4.1, §4.3, §4.4) was superseded: the site is built with Astro + React islands + Tailwind v4. See `docs/BUILD_LOG.md`.
 
 Status: proposal, analysis only. Nothing in the repository has been changed except this file.
 Date: 2026-10-04

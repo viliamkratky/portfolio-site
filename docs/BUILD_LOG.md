@@ -5,7 +5,7 @@ Append-only; newest at the bottom.
 
 ---
 
-## 2026-10-14 — Overnight MVP build
+## 2026-10-14: Overnight MVP build
 
 ### Decisions
 
@@ -14,8 +14,8 @@ The plan recommended vanilla TS custom elements and plain CSS, no React / Tailwi
 shadcn / React ecosystem when it makes the site better, and to ship ASAP. Astro keeps every page static HTML; React
 loads only in two islands:
 
-- `ExplodedView` (hero figure) — `client:visible`
-- `CommandMenu` (⌘K palette) — `client:idle`, built on **cmdk** (the library under shadcn's `Command`) + Radix Dialog for
+- `ExplodedView` (hero figure): `client:visible`
+- `CommandMenu` (⌘K palette): `client:idle`, built on **cmdk** (the library under shadcn's `Command`) + Radix Dialog for
   focus management and a11y.
 
 Tailwind reads the design tokens through `@theme` in `src/styles/global.css`; tokens stay the single source of truth.
@@ -24,7 +24,7 @@ Tailwind reads the design tokens through `@theme` in `src/styles/global.css`; to
 by a CSS keyframe. Re-add only for real choreography.
 
 **React Bits / Tailark / assistant-ui / driver.js: not used.** React Bits backgrounds (Dither, Prism, Silk) need
-three.js / R3F — too heavy for one texture. The site's own dithered light (`DitherLight.astro`) is a ~2 KB Bayer dither
+three.js / R3F, too heavy for one texture. The site's own dithered light (`DitherLight.astro`) is a ~2 KB Bayer dither
 on a small canvas, written for this site. Tailark sections would read as a template; assistant-ui and driver.js solve
 problems this site does not have.
 
@@ -34,19 +34,19 @@ idle auto-cycle until the visitor interacts; no cycle under reduced motion.
 
 **Contrast fix (plan C1):** `--color-fg-3` (#86837C) is the readable tertiary; `--color-fg-4` (#68655E) is decorative only.
 
-**Font:** Geist Sans + Geist Mono, self-hosted via Fontsource (plan M6 — specimen comparison still open, see below).
+**Font:** Geist Sans + Geist Mono, self-hosted via Fontsource (plan M6; specimen comparison still open, see below).
 
-**No contact form** (plan D11). **Dark only** (plan M4) — no theme command.
+**No contact form** (plan D11). **Dark only** (plan M4), no theme command.
 
 **Build guard:** a production build fails while `site.email` is empty (`ALLOW_MISSING_CONTACT=1` bypasses it for
 previews). Projects need `permission.caseStudy: true` in frontmatter or the content schema rejects them.
 
 ### Content used
 
-- Medical Navigator — from `content/case-studies/medical-navigator.md` (public facts only).
-- ExCoLabs — condensed from the archive case study; screenshots cleared (`can_publish_screenshots: true`).
-- This website — written from the decisions above.
-- Decision Watchdog — listed only (no page), description from the owner's own tool notes. **Needs owner confirmation.**
+- Medical Navigator: from the private draft in `content/case-studies/` (public facts only).
+- ExCoLabs: condensed from the archive case study; screenshots cleared (`can_publish_screenshots: true`).
+- This website: written from the decisions above.
+- Decision Watchdog: listed only (no page), description from the owner's own tool notes. **Needs owner confirmation.**
 
 ### Owner TODO before launch
 
@@ -85,7 +85,7 @@ previews). Projects need `permission.caseStudy: true` in frontmatter or the cont
 
 ---
 
-## 2026-10-14 — Redesign: precision minimalism
+## 2026-10-14: Redesign, precision minimalism
 
 ### Why
 Owner review of the first version: clean but forgettable and "odmerané" (cold). Too many elements per screen, flat
@@ -116,10 +116,11 @@ production, excluded from the sitemap). The owner approved Hubot Sans with the k
 
 ---
 
-## 2026-10-14 — Pre-publication review
+## 2026-10-14: Pre-publication review
 
 - Decision Watchdog description confirmed against the public resume and the public repository
   (github.com/viliamkratky/decision-watchdog); stack updated to Python, Ollama, Git, Claude Code / Codex hooks.
 - Repository prepared for publication: `/lab` and its font file removed, private archive details and NDA references
   removed from docs, private drafts (`content/`) kept out of git, licence split into MIT code and all-rights-reserved
   content, resume replaced with the version without a phone number.
+- Empty placeholder documents removed (`docs/CONTENT_STRATEGY.md`, `docs/COMPONENT_RULES.md`, `references/inspiration.md`). `IMPLEMENTATION_PLAN.md` still mentions them as part of its original audit.

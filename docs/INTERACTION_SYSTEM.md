@@ -29,7 +29,7 @@ Do not reproduce any specific product's interaction system directly.
 
 The site has two interaction layers.
 
-## Layer 1 — Standard Web Interface
+## Layer 1: Standard Web Interface
 
 Always available:
 
@@ -43,7 +43,7 @@ Always available:
 
 A visitor must be able to use the entire website normally without discovering any hidden feature.
 
-## Layer 2 — Power User Interface
+## Layer 2: Power User Interface
 
 Optional:
 
