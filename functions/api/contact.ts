@@ -2,9 +2,10 @@
  * POST /api/contact: Cloudflare Pages Function behind the contact dialog.
  *
  * The rest of the site stays static; this is its only server code. Layers, in
- * order: same-origin check, honeypot and minimum fill time (dropped silently),
- * shared validation, Turnstile verification, then delivery through Resend.
- * Rate limiting is a WAF rule on this path (Pages Functions have no binding).
+ * order: same-origin check, production host check, honeypot and minimum fill
+ * time (dropped silently), shared validation, Turnstile verification, then
+ * delivery through Resend. Rate limiting is a WAF rule on this path (Pages
+ * Functions have no binding).
  *
  * Secrets (Pages settings, or .dev.vars locally): TURNSTILE_SECRET_KEY,
  * RESEND_API_KEY. CONTACT_DRY_RUN=1 logs the message instead of sending it.
@@ -18,8 +19,17 @@ interface Env {
   CONTACT_DRY_RUN?: string;
 }
 
+const PRODUCTION_HOST = 'viliamkratky.dev';
+
 /** Must be an address on a domain verified in Resend. */
-const FROM = `${site.name} · portfolio <contact@viliamkratky.dev>`;
+const FROM = `${site.name} · portfolio <contact@${PRODUCTION_HOST}>`;
+
+/** Cloudflare's published Turnstile test secrets (always pass / fail / spent): local dev and previews. */
+const TEST_SECRETS = new Set([
+  '1x0000000000000000000000000000000AA',
+  '2x0000000000000000000000000000000AA',
+  '3x0000000000000000000000000000000AA',
+]);
 
 const json = (body: Record<string, unknown>, status = 200) =>
   new Response(JSON.stringify(body), {
@@ -39,6 +49,13 @@ async function verifyTurnstile(secret: string, token: string, ip: string | null)
 export async function onRequestPost({ request, env }: { request: Request; env: Env }): Promise<Response> {
   // Browsers always send Origin on a POST from fetch(); a mismatch is another site or a script.
   if (request.headers.get('origin') !== new URL(request.url).origin) return json({ ok: false, error: 'origin' }, 403);
+
+  // With real keys (production) only the custom domain is accepted. The same function also answers on
+  // *.pages.dev, which the WAF rate-limit rule on viliamkratky.dev does not cover. Previews use test keys.
+  const secret = env.TURNSTILE_SECRET_KEY ?? '';
+  if (secret && !TEST_SECRETS.has(secret) && new URL(request.url).hostname !== PRODUCTION_HOST) {
+    return json({ ok: false, error: 'host' }, 403);
+  }
 
   let form: FormData;
   try {

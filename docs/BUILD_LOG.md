@@ -180,6 +180,9 @@ nothing or a mail app they never use. The owner wants a form on the page instead
   time; server-side validation (lengths, email format) and an `Origin` check, because Pages answers with
   `access-control-allow-origin: *` by default; a WAF rate-limiting rule on `/api/contact`, because Pages Functions
   have no rate-limit binding.
+- **Added 2026-10-24:** at most 3 links per message (spam written by people is almost always link lists), and with
+  real Turnstile keys the function accepts only `viliamkratky.dev`. The same function also answers on `*.pages.dev`,
+  where the zone's WAF rule does not apply; previews keep working because they use Cloudflare's test keys.
 - **No confirmation email to the sender:** a form that mails arbitrary addresses gets abused. The visitor's address
   goes into `Reply-To` only.
 - **Privacy:** one line under the submit button saying the message is used only to reply. No consent banner (M10
@@ -205,7 +208,8 @@ adds SPF and DKIM.
 
 `wrangler pages dev` with Turnstile test keys and `CONTACT_DRY_RUN=1`: foreign or missing `Origin` → 403; honeypot
 and too-fast submissions → silent 200, nothing sent; invalid fields → 422 with per-field messages; missing token →
-403; valid → 200 and the message logged. In the browser: Turnstile loads under the new CSP with no console errors,
+403; valid → 200 and the message logged. Re-run on 2026-10-24 after the rebase, plus: 4 links → 422, 3 links → 200;
+a non-test secret on a host other than `viliamkratky.dev` → 403. In the browser: Turnstile loads under the new CSP with no console errors,
 field errors, sent state, draft cleared after sending, error state with the email fallback, mobile full-height and
 dark theme. A production build without the site key contains no dialog and no trigger.
 
