@@ -12,8 +12,9 @@ const socials = socialLinks(site);
 <!--
   Hiding fades the header out with a short drift up rather than sliding it off by its own
   height: iOS paints content above the viewport under the status bar, where a slid-off
-  header stays half visible. Hiding is faster than revealing; the drift decelerates on
-  --ease-out while the fade runs on the softer --ease-soft. While hidden its links ignore
+  header stays half visible. Hiding is faster than revealing. Drift and fade share the soft
+  curve so they stay in step: on --ease-out the 12px drift was mostly done in the first
+  frame and then hung while the fade went on, which read as a stutter. While hidden its links ignore
   pointers (they would otherwise be invisible tap targets) but stay focusable, and focus reveals it.
 -->
 <header id="site-header" class="pointer-events-none fixed inset-x-0 top-0 z-50 text-white mix-blend-difference data-[hidden=true]:-translate-y-3 data-[hidden=true]:opacity-0 data-[hidden=true]:[&_*]:pointer-events-none">
@@ -117,7 +118,7 @@ const socials = socialLinks(site);
 <style>
   #site-header {
     transition:
-      translate var(--dur-3) var(--ease-out),
+      translate var(--dur-3) var(--ease-soft),
       opacity var(--dur-3) var(--ease-soft);
   }
   #site-header[data-hidden='true'] {
