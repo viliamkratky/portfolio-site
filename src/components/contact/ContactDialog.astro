@@ -23,9 +23,10 @@ const error = 'text-[14px] text-accent-ink';
     data-sitekey={turnstileSiteKey}
     data-lenis-prevent
   >
-    <div class="flex min-h-full flex-col px-(--gutter) pb-8 md:px-10 md:pb-10">
+    <div class="flex min-h-full flex-col px-(--gutter) pb-6 md:px-10 md:pb-10">
       <div class="flex h-(--header-h) shrink-0 items-center justify-between md:h-auto md:pt-9">
-        <h2 id="contact-title" class="t-h3">
+        {/* Initial focus lands here (autofocus), not on Close, which would show a focus ring on touch. */}
+        <h2 id="contact-title" tabindex="-1" autofocus class="t-h3 outline-none">
           Let’s talk
         </h2>
         <button type="button" data-close class="-mx-3 px-3 py-3 text-[14px]">
@@ -36,8 +37,8 @@ const error = 'text-[14px] text-accent-ink';
         </button>
       </div>
 
-      <form data-contact-form novalidate class="mt-6 flex flex-1 flex-col gap-5 md:mt-8">
-        <div class="grid gap-5 sm:grid-cols-2">
+      <form data-contact-form novalidate class="mt-2 flex min-h-0 flex-1 flex-col gap-4 md:mt-8 md:gap-5">
+        <div class="grid gap-4 sm:grid-cols-2 md:gap-5">
           <div class="flex flex-col gap-2">
             <label for="contact-name" class={label}>
               Name
@@ -73,18 +74,19 @@ const error = 'text-[14px] text-accent-ink';
             <p id="contact-email-error" data-error-for="email" class={error} hidden />
           </div>
         </div>
-        <div class="flex flex-col gap-2">
+        {/* On phones the message field takes the free height, so the form fits one screen without a gap. */}
+        <div class="flex min-h-0 flex-1 flex-col gap-2 md:flex-none">
           <label for="contact-message" class={label}>
             Message
           </label>
           <textarea
             id="contact-message"
             name="message"
-            rows="6"
+            rows="2"
             required
             maxlength={CONTACT_LIMITS.message}
             aria-describedby="contact-message-hint contact-message-error"
-            class:list={[input, 'min-h-36 resize-y']}
+            class:list={[input, 'min-h-20 flex-1 resize-none md:h-44 md:flex-none md:resize-y']}
           />
           <p id="contact-message-hint" class="text-[14px] text-fg-3">
             Context, the problem, and what a good outcome looks like.
@@ -99,7 +101,8 @@ const error = 'text-[14px] text-accent-ink';
           </label>
         </div>
 
-        <div data-turnstile class="empty:hidden" />
+        {/* Zero height while Turnstile stays invisible; the negative margin cancels the form gap until it asks. */}
+        <div data-turnstile class="-mt-4 data-[interactive]:mt-0 md:-mt-5 md:data-[interactive]:mt-0" />
 
         <p data-form-error role="alert" class="text-[15px] text-accent-ink" hidden>
           <span data-error-text />{' '}
@@ -108,7 +111,7 @@ const error = 'text-[14px] text-accent-ink';
           </a>
         </p>
 
-        <div class="mt-auto flex flex-wrap items-center justify-between gap-x-6 gap-y-4 pt-2">
+        <div class="flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
           <p class="max-w-[36ch] text-[13px] text-fg-3">
             Used only to reply to you. Spam protection by Cloudflare Turnstile.
           </p>

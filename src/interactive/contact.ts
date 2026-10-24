@@ -123,6 +123,8 @@ function setup(dialog: HTMLDialogElement) {
             waiting.splice(0).forEach((resolve) => resolve(t));
           },
           'expired-callback': () => (token = ''),
+          'before-interactive-callback': () => (slot.dataset.interactive = ''),
+          'after-interactive-callback': () => delete slot.dataset.interactive,
         });
       });
       // A failed load can be retried on the next open or submit.
