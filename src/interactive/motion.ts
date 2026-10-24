@@ -123,7 +123,7 @@ function kineticLoop(now: number) {
 
 /* ------------------------------------------------------- halftone story --- */
 
-function setupStory(tl: (el: HTMLElement) => gsap.core.Timeline | null) {
+function setupStory(tl: (el: HTMLElement, onToggle: (self: ScrollTrigger) => void) => gsap.core.Timeline | null) {
   document.querySelectorAll<HTMLElement>('[data-story]').forEach((story) => {
     const canvas = story.querySelector<HTMLCanvasElement>('canvas')!;
     const ctx = canvas.getContext('2d')!;
@@ -157,12 +157,21 @@ function setupStory(tl: (el: HTMLElement) => gsap.core.Timeline | null) {
     addEventListener('resize', size);
     new MutationObserver(draw).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
 
-    const t = tl(story);
+    // While the scene is pinned, iOS Safari can show the page below it: its floating
+    // toolbar reaches past the large viewport the section covers. The page takes the
+    // scene's colour once the field has filled the bottom edge (from p ≈ 0.47).
+    let pinned = false;
+    const edge = () => root.toggleAttribute('data-story-dark', pinned && state.p > 0.5);
+
+    const t = tl(story, (self) => {
+      pinned = self.isActive;
+      edge();
+    });
     if (!t) return;
     t.from(story.querySelectorAll('.s1 .word'), { yPercent: 160, rotate: 4, duration: 1, stagger: 0.12, ease: 'power3.out' })
       .to({}, { duration: 0.5 })
       .to(story.querySelector('.s1'), { opacity: 0, scale: 0.9, filter: 'blur(10px)', duration: 0.9 })
-      .to(state, { p: 1, duration: 1.4, ease: 'none', onUpdate: draw }, '<0.1')
+      .to(state, { p: 1, duration: 1.4, ease: 'none', onUpdate: () => (draw(), edge()) }, '<0.1')
       .from(story.querySelectorAll('.s2 .word'), { yPercent: 160, rotate: 4, duration: 1, stagger: 0.15, ease: 'power3.out' }, '-=0.5')
       .to({}, { duration: 0.6 });
   });
@@ -360,8 +369,12 @@ document.fonts.ready.then(() => {
     history.replaceState(null, '', hash);
   });
 
-  setupStory((el) =>
-    gsap.timeline({ scrollTrigger: { trigger: el, start: 'top top', end: '+=280%', scrub: 0.8, pin: true } }),
+  setupStory((el, onToggle) =>
+    gsap.timeline({
+      // anticipatePin applies the pin a little early on fast (touch momentum) scrolls,
+      // so the scene doesn't jump as it switches to position: fixed.
+      scrollTrigger: { trigger: el, start: 'top top', end: '+=280%', scrub: 0.8, pin: true, anticipatePin: 1, onToggle },
+    }),
   );
   setupReveals();
   setupCursorCard();
