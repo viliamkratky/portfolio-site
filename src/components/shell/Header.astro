@@ -134,16 +134,27 @@ const socials = socialLinks(site);
   });
   matchMedia('(min-width: 48rem)').addEventListener('change', (e) => e.matches && dialog.close());
 
-  // Hide while scrolling down through content, reveal on scroll up.
+  // Hide while scrolling down through content, reveal on scroll up. A new direction only
+  // counts after TURN px of travel, and overscroll past either end is ignored: iOS nudges
+  // scrollY back and forth while its toolbars resize at the start of a scroll, which made
+  // the header start leaving, turn back and then leave again.
   const header = document.getElementById('site-header')!;
+  const TURN = 24;
   let lastY = scrollY;
+  let turnY = scrollY;
+  let dir = 0;
   addEventListener(
     'scroll',
     () => {
-      const y = scrollY;
-      if (Math.abs(y - lastY) < 6) return;
-      header.dataset.hidden = String(y > lastY && y > 160 && !header.contains(document.activeElement));
+      const y = Math.min(Math.max(scrollY, 0), document.documentElement.scrollHeight - innerHeight);
+      const d = Math.sign(y - lastY);
+      if (d && d !== dir) {
+        dir = d;
+        turnY = lastY;
+      }
       lastY = y;
+      if (Math.abs(y - turnY) < TURN) return;
+      header.dataset.hidden = String(dir > 0 && y > 160 && !header.contains(document.activeElement));
     },
     { passive: true },
   );
