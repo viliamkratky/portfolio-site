@@ -223,51 +223,6 @@ function setupCursorCard() {
   requestAnimationFrame(loop);
 }
 
-/* ------------------------------------------- work focus on touch --- */
-
-/**
- * Touch screens have no hover, so the row crossing the middle of the viewport
- * becomes the "hovered" one: the others fade back. Opacity only, no width
- * change, so nothing re-wraps while scrolling.
- */
-function setupWorkFocus() {
-  if (!matchMedia('(hover: none)').matches) return;
-  document.querySelectorAll<HTMLElement>('.work-list').forEach((list) => {
-    const rows = [...list.querySelectorAll<HTMLElement>('.work-row')];
-    let ticking = false;
-    const update = () => {
-      ticking = false;
-      const mid = innerHeight / 2;
-      const box = list.getBoundingClientRect();
-      let best: HTMLElement | null = null;
-      if (box.top < mid && box.bottom > mid) {
-        let bestD = Infinity;
-        for (const r of rows) {
-          const b = r.getBoundingClientRect();
-          const d = Math.abs(b.top + b.height / 2 - mid);
-          if (d < bestD) {
-            bestD = d;
-            best = r;
-          }
-        }
-      }
-      rows.forEach((r) => r.toggleAttribute('data-active', r === best));
-      list.toggleAttribute('data-focus', Boolean(best));
-    };
-    addEventListener(
-      'scroll',
-      () => {
-        if (!ticking) {
-          ticking = true;
-          requestAnimationFrame(update);
-        }
-      },
-      { passive: true },
-    );
-    update();
-  });
-}
-
 /* ------------------------------------------------------------ terminal --- */
 
 function setupTerminal() {
@@ -373,7 +328,6 @@ function setupReveals() {
 
 splitKinetic();
 setupTerminal();
-if (!reduce) setupWorkFocus();
 
 document.fonts.ready.then(() => {
   fitAll();
