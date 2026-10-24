@@ -223,3 +223,41 @@ dark theme. A production build without the site key contains no dialog and no tr
    (`1x00000000000000000000AA` / `1x0000000000000000000000000000000AA`) and `CONTACT_DRY_RUN=1`.
 4. WAF rate-limiting rule: path equals `/api/contact`, method POST, by IP, block when exceeded.
 5. Redeploy, then send one real message.
+
+---
+
+## 2026-10-24: Contact form live
+
+### Milestone
+
+Merged as `de44321` and live on https://viliamkratky.dev. The owner sent a real message from production and it
+arrived; replying goes to the visitor's address.
+
+### Setup as done (differs from the planned steps in the 2026-10-15 entry)
+
+- **Resend:** domain `viliamkratky.dev` verified, EU region, API key with sending access for that domain only.
+- **DNS:** root SPF `v=spf1 -all` (nothing sends from the apex envelope; Resend uses `send.viliamkratky.dev`) and
+  DMARC `v=DMARC1; p=reject; sp=reject; adkim=s; aspf=s;`. Strict alignment works because Resend's DKIM signature
+  is on `viliamkratky.dev`; a preview test showed SPF, DKIM and DMARC all PASS in Gmail before the policy went to
+  reject. No MX on the apex: `contact@viliamkratky.dev` does not receive mail. Cloudflare Email Routing would fix
+  that if it is ever needed.
+- **Turnstile:** Managed widget, hostname `viliamkratky.dev` only (`www` redirects to the apex).
+- **Pages variables:** Production has the real keys. Preview has Cloudflare's Turnstile test keys and the real
+  Resend key without `CONTACT_DRY_RUN`, so previews send real mail.
+- **WAF:** one rate-limiting rule, URI path equals `/api/contact`, 3 requests per 10 s per IP, block for 10 s. The
+  Free plan cannot match on method. Checked: requests 4 to 6 in a burst returned 429.
+
+### Verified on production
+
+Real Turnstile key in the page, CSP allows `challenges.cloudflare.com`, foreign origin 403, invalid fields 422,
+missing token 403, the same function on `portfolio-site-ci5.pages.dev` 403 (`host`). In an automated browser the
+widget asks for a click ("Verify you are human"); regular browsers usually pass without one.
+
+### Dialog on phones
+
+- Initial focus goes to the dialog heading (`autofocus`, `tabindex="-1"`) instead of Close, which showed the accent
+  focus ring as soon as the dialog opened on touch.
+- The message field takes the free height, so the form fits one screen without a gap above the button. Checked at
+  375×553 (iPhone SE with Safari bars), 390×664 and 430×830; the field shrinks to 80 px at the smallest size. From
+  `md` it keeps a fixed height and stays resizable.
+- The empty Turnstile slot no longer adds a form gap; it only takes space when Turnstile asks for interaction.
