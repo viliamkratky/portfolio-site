@@ -16,7 +16,7 @@ const second = ['To', 'a', 'working', 'system.'];
   fills the top last, so the overhang is empty while it overlaps the hero (reduced motion
   draws it full from the start, so it gets no overhang).
 -->
-<section class="story relative grid h-lvh place-items-center overflow-x-clip pb-[calc(100lvh-100svh)]" data-story aria-label="From an unclear problem to a working system.">
+<section class="story relative grid h-lvh bg-bg place-items-center overflow-x-clip pb-[calc(100lvh-100svh)]" data-story aria-label="From an unclear problem to a working system.">
   <canvas class="pointer-events-none absolute inset-x-0 bottom-0 h-[calc(100%+6rem)] w-full motion-reduce:h-full" aria-hidden="true"></canvas>
   <p class="s1 t-mega container-page absolute text-center" aria-hidden="true">
     {first.map((w) => <><span class="mask"><span class="word">{w}</span></span>{' '}</>)}
