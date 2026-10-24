@@ -123,11 +123,41 @@ function kineticLoop(now: number) {
 
 /* ------------------------------------------------------- halftone story --- */
 
+/** Where the field stops: solid from the bottom, still halftone across the top third. */
+const STORY_END = 0.72;
+
+/**
+ * Gives both story beats one font size, the largest at which no word is wider
+ * than the content box and neither beat is taller than most of the small viewport.
+ * On a phone the longest word sets it; on a wide screen the height does.
+ */
+function fitStory() {
+  document.querySelectorAll<HTMLElement>('[data-story]').forEach((story) => {
+    const beats = [...story.querySelectorAll<HTMLElement>('.s1, .s2')];
+    const maxH = root.clientHeight * 0.62;
+    const fits = (px: number) =>
+      beats.every((el) => {
+        el.style.fontSize = `${px}px`;
+        const cs = getComputedStyle(el);
+        const avail = el.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+        return el.offsetHeight <= maxH && [...el.querySelectorAll<HTMLElement>('.mask')].every((m) => m.offsetWidth <= avail);
+      });
+    let lo = 32;
+    let hi = 400;
+    while (hi - lo > 1) {
+      const mid = Math.round((lo + hi) / 2);
+      if (fits(mid)) lo = mid;
+      else hi = mid;
+    }
+    beats.forEach((el) => (el.style.fontSize = `${Math.floor(lo * 0.97)}px`));
+  });
+}
+
 function setupStory(tl: (el: HTMLElement, onToggle: (self: ScrollTrigger) => void) => gsap.core.Timeline | null) {
   document.querySelectorAll<HTMLElement>('[data-story]').forEach((story) => {
     const canvas = story.querySelector<HTMLCanvasElement>('canvas')!;
     const ctx = canvas.getContext('2d')!;
-    const state = { p: reduce ? 1 : 0 };
+    const state = { p: reduce ? STORY_END : 0 };
     const draw = () => {
       const w = canvas.clientWidth;
       const h = canvas.clientHeight;
@@ -171,7 +201,7 @@ function setupStory(tl: (el: HTMLElement, onToggle: (self: ScrollTrigger) => voi
     t.from(story.querySelectorAll('.s1 .word'), { yPercent: 160, rotate: 4, duration: 1, stagger: 0.12, ease: 'power3.out' })
       .to({}, { duration: 0.5 })
       .to(story.querySelector('.s1'), { opacity: 0, scale: 0.9, filter: 'blur(10px)', duration: 0.9 })
-      .to(state, { p: 1, duration: 1.4, ease: 'none', onUpdate: () => (draw(), edge()) }, '<0.1')
+      .to(state, { p: STORY_END, duration: 1.4, ease: 'none', onUpdate: () => (draw(), edge()) }, '<0.1')
       .from(story.querySelectorAll('.s2 .word'), { yPercent: 160, rotate: 4, duration: 1, stagger: 0.15, ease: 'power3.out' }, '-=0.5')
       .to({}, { duration: 0.6 });
   });
@@ -341,6 +371,7 @@ setupTerminal();
 document.fonts.ready.then(() => {
   fitAll();
   fitWorkTitles();
+  fitStory();
 
   if (reduce) {
     setupStory(() => null);
@@ -372,8 +403,9 @@ document.fonts.ready.then(() => {
   setupStory((el, onToggle) =>
     gsap.timeline({
       // anticipatePin applies the pin a little early on fast (touch momentum) scrolls,
-      // so the scene doesn't jump as it switches to position: fixed.
-      scrollTrigger: { trigger: el, start: 'top top', end: '+=280%', scrub: 0.8, pin: true, anticipatePin: 1, onToggle },
+      // so the scene doesn't jump as it switches to position: fixed. A thumb covers the
+      // same distance with more effort than a wheel, so touch gets a shorter scene.
+      scrollTrigger: { trigger: el, start: 'top top', end: finePointer ? '+=280%' : '+=180%', scrub: 0.8, pin: true, anticipatePin: 1, onToggle },
     }),
   );
   setupReveals();
@@ -390,5 +422,6 @@ addEventListener('resize', () => {
   lastWidth = innerWidth;
   fitAll();
   fitWorkTitles();
+  fitStory();
   if (!reduce) ScrollTrigger.refresh();
 });
