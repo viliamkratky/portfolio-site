@@ -7,7 +7,12 @@ const first = ['From', 'an', 'unclear', 'problem.'];
 const second = ['To', 'a', 'working', 'system.'];
 ---
 
-<section class="story relative grid h-svh place-items-center overflow-hidden" data-story aria-label="From an unclear problem to a working system.">
+<!--
+  Pinned scenes are position: fixed, so the section must cover the large viewport
+  (mobile browser bars collapsed); otherwise the page shows through below it. The
+  bottom padding keeps the text centred in the small viewport, where it is always visible.
+-->
+<section class="story relative grid h-lvh place-items-center overflow-hidden pb-[calc(100lvh-100svh)]" data-story aria-label="From an unclear problem to a working system.">
   <canvas class="absolute inset-0 h-full w-full" aria-hidden="true"></canvas>
   <p class="s1 t-mega container-page absolute text-center" aria-hidden="true">
     {first.map((w) => <><span class="mask"><span class="word">{w}</span></span>{' '}</>)}
