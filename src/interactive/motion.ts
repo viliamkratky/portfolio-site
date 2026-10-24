@@ -153,7 +153,7 @@ function fitStory() {
   });
 }
 
-function setupStory(tl: (el: HTMLElement, onToggle: (self: ScrollTrigger) => void) => gsap.core.Timeline | null) {
+function setupStory(animate: boolean) {
   document.querySelectorAll<HTMLElement>('[data-story]').forEach((story) => {
     const canvas = story.querySelector<HTMLCanvasElement>('canvas')!;
     const ctx = canvas.getContext('2d')!;
@@ -187,23 +187,57 @@ function setupStory(tl: (el: HTMLElement, onToggle: (self: ScrollTrigger) => voi
     addEventListener('resize', size);
     new MutationObserver(draw).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
 
+    if (!animate) return;
+
     // While the scene is pinned, iOS Safari can show the page below it: its floating
     // toolbar reaches past the large viewport the section covers. The page takes the
     // scene's colour once the field has filled the bottom edge (from p ≈ 0.47).
     let pinned = false;
     const edge = () => root.toggleAttribute('data-story-dark', pinned && state.p > 0.5);
 
-    const t = tl(story, (self) => {
-      pinned = self.isActive;
-      edge();
-    });
-    if (!t) return;
-    t.from(story.querySelectorAll('.s1 .word'), { yPercent: 160, rotate: 4, duration: 1, stagger: 0.12, ease: 'power3.out' })
-      .to({}, { duration: 0.5 })
+    // The beats play in time, not scrubbed: wherever the scroll stops, and however fast
+    // a flick passes the scene, each beat finishes. Scroll position only picks the beat.
+    const t = gsap.timeline({ paused: true })
+      .addLabel('rest')
+      .from(story.querySelectorAll('.s1 .word'), { yPercent: 160, rotate: 4, duration: 1, stagger: 0.12, ease: 'power3.out' })
+      .addLabel('one')
       .to(story.querySelector('.s1'), { opacity: 0, scale: 0.9, filter: 'blur(10px)', duration: 0.9 })
-      .to(state, { p: STORY_END, duration: 1.4, ease: 'none', onUpdate: () => (draw(), edge()) }, '<0.1')
+      .to(state, { p: STORY_END, duration: 1.4, ease: 'power2.inOut', onUpdate: () => (draw(), edge()) }, '<0.1')
       .from(story.querySelectorAll('.s2 .word'), { yPercent: 160, rotate: 4, duration: 1, stagger: 0.15, ease: 'power3.out' }, '-=0.5')
-      .to({}, { duration: 0.6 });
+      .addLabel('two');
+
+    const pin = ScrollTrigger.create({
+      trigger: story,
+      start: 'top top',
+      // A thumb covers the same distance with more effort than a wheel, so touch gets a shorter scene.
+      end: finePointer ? '+=280%' : '+=180%',
+      pin: true,
+      // Applies the pin a little early on fast (touch momentum) scrolls, so the scene
+      // doesn't jump as it switches to position: fixed.
+      anticipatePin: 1,
+      onToggle: (self) => {
+        pinned = self.isActive;
+        edge();
+      },
+    });
+
+    const beats = ['rest', 'one', 'two'];
+    let beat = -1;
+    let go: gsap.core.Tween | undefined;
+    const sync = () => {
+      const y = pin.scroll();
+      // Beat 1 rises while the section comes in; beat 2 takes over 40% into the pin.
+      const next = y >= pin.start + (pin.end - pin.start) * 0.4 ? 2 : y > pin.start - innerHeight * 0.5 ? 1 : 0;
+      if (next === beat) return;
+      go?.kill();
+      // Off screen (on load, after a restored or jumped scroll) the beat is set, not played.
+      const r = story.getBoundingClientRect();
+      if (beat < 0 || r.bottom <= 0 || r.top >= innerHeight) t.seek(beats[next]);
+      else go = t.tweenTo(beats[next]);
+      beat = next;
+    };
+    addEventListener('scroll', sync, { passive: true });
+    ScrollTrigger.addEventListener('refresh', sync);
   });
 }
 
@@ -374,7 +408,7 @@ document.fonts.ready.then(() => {
   fitStory();
 
   if (reduce) {
-    setupStory(() => null);
+    setupStory(false);
     return;
   }
 
@@ -400,14 +434,7 @@ document.fonts.ready.then(() => {
     history.replaceState(null, '', hash);
   });
 
-  setupStory((el, onToggle) =>
-    gsap.timeline({
-      // anticipatePin applies the pin a little early on fast (touch momentum) scrolls,
-      // so the scene doesn't jump as it switches to position: fixed. A thumb covers the
-      // same distance with more effort than a wheel, so touch gets a shorter scene.
-      scrollTrigger: { trigger: el, start: 'top top', end: finePointer ? '+=280%' : '+=180%', scrub: 0.8, pin: true, anticipatePin: 1, onToggle },
-    }),
-  );
+  setupStory(true);
   setupReveals();
   setupCursorCard();
   setupMagnets();
