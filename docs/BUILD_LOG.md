@@ -124,3 +124,11 @@ production, excluded from the sitemap). The owner approved Hubot Sans with the k
   removed from docs, private drafts (`content/`) kept out of git, licence split into MIT code and all-rights-reserved
   content, resume replaced with the version without a phone number.
 - Empty placeholder documents removed (`docs/CONTENT_STRATEGY.md`, `docs/COMPONENT_RULES.md`, `references/inspiration.md`). `IMPLEMENTATION_PLAN.md` still mentions them as part of its original audit.
+
+---
+
+## 2026-10-24: Work preview without the dither reveal
+
+- The work-list cursor preview no longer shows a dithered accent-red version first and swaps to the image after a
+  fixed 380 ms + 500 ms fade. The owner found the forced wait an anti-pattern. All previews are now fetched and decoded
+  as the list approaches the viewport, and hovering shows the real image at once (fine pointers only, as before).
