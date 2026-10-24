@@ -170,62 +170,47 @@ function setupStory(tl: (el: HTMLElement) => gsap.core.Timeline | null) {
 
 /* ---------------------------------------------------- work cursor card --- */
 
-const BAYER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5].map((v) => (v + 0.5) / 16);
-
 function setupCursorCard() {
   const card = document.querySelector<HTMLElement>('[data-cursor-card]');
-  if (!card || !finePointer) return;
-  const canvas = card.querySelector<HTMLCanvasElement>('canvas')!;
-  const img = card.querySelector<HTMLImageElement>('img')!;
+  const rows = [...document.querySelectorAll<HTMLElement>('[data-preview]')];
+  if (!card || !rows.length || !finePointer) return;
   const empty = card.querySelector<HTMLElement>('[data-empty]')!;
   const pos = { x: mouse.x, y: mouse.y };
-  let timer = 0;
+  const previews = new Map<HTMLElement, HTMLImageElement>();
 
-  const dither = (source: HTMLImageElement) => {
-    const w = 160;
-    const h = Math.round((w * source.naturalHeight) / source.naturalWidth);
-    canvas.width = w;
-    canvas.height = h;
-    const c = canvas.getContext('2d')!;
-    c.drawImage(source, 0, 0, w, h);
-    const d = c.getImageData(0, 0, w, h);
-    for (let i = 0; i < d.data.length; i += 4) {
-      const px = (i / 4) % w;
-      const py = Math.floor(i / 4 / w);
-      const l = (0.2126 * d.data[i] + 0.7152 * d.data[i + 1] + 0.0722 * d.data[i + 2]) / 255;
-      const on = l > BAYER[(py & 3) * 4 + (px & 3)];
-      d.data[i] = on ? 255 : 0;
-      d.data[i + 1] = on ? 47 : 0;
-      d.data[i + 2] = 0;
-      d.data[i + 3] = 255;
+  // Fetch and decode every preview before the list is reached, so hovering shows the image at once.
+  const load = () => {
+    if (previews.size) return;
+    for (const row of rows) {
+      if (!row.dataset.preview) continue;
+      const img = new Image();
+      img.alt = '';
+      img.src = row.dataset.preview;
+      img.decode().catch(() => {});
+      card.appendChild(img);
+      previews.set(row, img);
     }
-    c.putImageData(d, 0, 0);
   };
+  const io = new IntersectionObserver(
+    ([e]) => {
+      if (!e.isIntersecting) return;
+      io.disconnect();
+      load();
+    },
+    { rootMargin: '100% 0px' },
+  );
+  io.observe(rows[0].closest('ol') ?? rows[0]);
 
-  document.querySelectorAll<HTMLElement>('[data-preview]').forEach((row) => {
+  rows.forEach((row) => {
     row.addEventListener('pointerenter', () => {
-      clearTimeout(timer);
-      card.classList.remove('resolved');
-      card.classList.add('on');
+      load();
+      const img = previews.get(row);
+      previews.forEach((p) => p.classList.toggle('active', p === img));
+      empty.textContent = img ? '' : (row.dataset.previewLabel ?? '');
       card.style.aspectRatio = row.dataset.previewRatio ?? '';
-      const src = row.dataset.preview;
-      if (src) {
-        empty.textContent = '';
-        canvas.style.display = '';
-        const source = new Image();
-        source.onload = () => {
-          dither(source);
-          img.src = src;
-          timer = window.setTimeout(() => card.classList.add('resolved'), 380);
-        };
-        source.src = src;
-      } else {
-        canvas.style.display = 'none';
-        img.removeAttribute('src');
-        empty.textContent = row.dataset.previewLabel ?? '';
-      }
+      card.classList.add('on');
     });
-    row.addEventListener('pointerleave', () => card.classList.remove('on', 'resolved'));
+    row.addEventListener('pointerleave', () => card.classList.remove('on'));
   });
 
   const loop = () => {
