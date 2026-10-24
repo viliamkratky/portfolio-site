@@ -27,3 +27,7 @@ pnpm-debug.log*
 
 # private drafts and verification notes (source for src/content)
 /content/
+
+# Cloudflare Pages local dev (secrets and state)
+.dev.vars
+.wrangler/

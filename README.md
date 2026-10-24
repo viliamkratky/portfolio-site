@@ -10,12 +10,14 @@ The source of my personal portfolio: a static site with a motion layer on top, b
 - **Scroll scenes.** A pinned scrollytelling scene where a halftone field turns the page from white to black, a work list with a cursor-following preview that resolves from an ordered dither into the real image, and a terminal that types real output. GSAP ScrollTrigger and Lenis.
 - **Keyboard layer.** `⌘K` command menu (cmdk) with a small command line (`:whoami`, `:stack`, `:system`, `:open <project>`), `j` / `k` section navigation, `g` + letter page jumps and `?` for help. Single-key shortcuts never fire inside inputs and can be switched off. See [`src/interactive/keys.ts`](src/interactive/keys.ts).
 - **Static first.** Every page is static HTML from Astro and works without JavaScript. React runs in exactly one island, the command menu. Under `prefers-reduced-motion` every scene renders in its final state.
+- **One piece of server code.** The contact dialog posts to a single Cloudflare Pages Function (`functions/api/contact.ts`) that checks the origin, a honeypot and fill time, validates with the same rules as the browser (`src/lib/contact.ts`), verifies Cloudflare Turnstile and sends through Resend. Turnstile loads only when the dialog opens; without JS the CTA is a plain `mailto:` link.
 - **Real data only.** Status, location, build date and commit come from config and the build, never from decoration.
 - **Light and dark** themes, shared element transitions between the work list and case studies (cross-document View Transitions), and a build that fails if a project has no publication clearance.
 
 ## Stack
 
 Astro 7 · TypeScript · Tailwind CSS v4 (design tokens via `@theme`) · GSAP + Lenis · React + cmdk (command menu only) · MDX content collections · Fontsource (Hubot Sans, Mona Sans, Martian Mono, Doto).
+Contact: Cloudflare Pages Functions · Turnstile · Resend.
 
 ## Run it
 
@@ -25,7 +27,12 @@ npm run dev        # http://localhost:4321
 npm run check      # types
 npm run build      # static output in dist/
 npm run preview
+
+# with the contact endpoint (Cloudflare Pages Functions): copy .dev.vars.example to .dev.vars first
+PUBLIC_TURNSTILE_SITE_KEY=1x00000000000000000000AA npm run preview:pages   # http://localhost:8788
 ```
+
+Hosted on Cloudflare Pages; a push to `main` deploys production.
 
 ## Structure
 

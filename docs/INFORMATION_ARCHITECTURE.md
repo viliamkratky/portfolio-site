@@ -383,12 +383,15 @@ Route:
 
 Keep it simple.
 
-Potential options:
+Options:
 
-- email
+- contact form, opened as a dialog from every "Let's talk" CTA (needs JS)
+- email, always visible, with a copy button (the path without JS)
 - LinkedIn
 - GitHub
-- direct contact form if justified
+
+The form was added on 2026-10-15 because a `mailto:` CTA fails for visitors without a mail client. Rationale and
+bot protection are in `BUILD_LOG.md`.
 
 A potential client or employer should never need to search for contact information.
 

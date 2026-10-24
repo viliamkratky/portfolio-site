@@ -505,6 +505,25 @@
   color: var(--muted);
 }
 
+/* ---------------------------------------------------- contact dialog --- */
+
+.contact-dialog::backdrop {
+  background: color-mix(in oklab, var(--bg) 55%, transparent);
+  backdrop-filter: blur(6px);
+}
+.contact-dialog[open] {
+  animation: dialog-in var(--dur-3) var(--ease-out);
+}
+.contact-dialog[open]::backdrop {
+  animation: fade-in var(--dur-2) var(--ease-out);
+}
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+}
+
 @keyframes fade-in {
   from {
     opacity: 0;

@@ -143,3 +143,83 @@ production, excluded from the sitemap). The owner approved Hubot Sans with the k
 - Header direction: a new scroll direction only counts after 24 px of travel, and overscroll past either end is
   ignored. iOS nudges `scrollY` back and forth while its toolbars resize at the start of a scroll; with the old 6 px
   per-event check the header started hiding, turned back and stalled, then hid.
+
+---
+
+---
+
+## 2026-10-15: Hosting and contact form
+
+Written on 2026-10-15 on `feature/contact-form`, rebased onto `main` on 2026-10-24.
+
+### Hosting (resolves plan M9)
+
+- **Cloudflare Pages** with Git integration on `github.com/viliamkratky/portfolio-site`. Cloudflare runs the build;
+  a push to `main` deploys production, so changes go through a branch first (git workflow in `AGENTS.md`).
+- Live at https://viliamkratky.dev, DNS on Cloudflare. The headers from `public/_headers` (CSP, HSTS, immutable
+  `/_astro/*`) are served as written (checked 2026-10-15).
+- The GitHub Actions quality gate recommended in M9 does not exist yet; it stays open together with tests / CI.
+- Owner TODO items 1 (email, links, resume), 2 (domain) and 6 (hosting, deploy) from the MVP entry are done.
+
+### Contact form (reverses plan D11 and §7.12)
+
+**Why:** the "Let's talk" CTA is a `mailto:` link. A visitor on webmail, or without a configured mail client, gets
+nothing or a mail app they never use. The owner wants a form on the page instead of that dead end.
+
+- **Pattern:** with JS, the "Let's talk" CTA opens a native `<dialog>` (full height on mobile, like the menu, plan D10;
+  a centred panel from `md`). Without JS it stays the `mailto:` link it was. Three fields: name, email, message. The
+  message hint repeats Context / Problem / Outcome from `/contact`. No React: the command menu stays the only island.
+- **Email stays visible** with its Copy button: people copy addresses, and it is the path without JS. Without JS the
+  form is not shown, because Turnstile needs JS.
+- **States:** sending, sent, and error with a fallback to the email address. A draft survives an accidental close.
+- **Endpoint:** one Cloudflare Pages Function, `functions/api/contact.ts`. The Astro site stays `output: 'static'`,
+  no adapter. Validation rules live in `src/lib/contact.ts` and are shared by the dialog and the function.
+- **Switch:** the form ships only when the build has `PUBLIC_TURNSTILE_SITE_KEY` (`src/lib/turnstile.ts`). A
+  production build without it is the site as before, so the code can merge before the accounts exist.
+- **Bot protection, in layers:** Cloudflare Turnstile verified on the server; a honeypot field and a minimum fill
+  time; server-side validation (lengths, email format) and an `Origin` check, because Pages answers with
+  `access-control-allow-origin: *` by default; a WAF rate-limiting rule on `/api/contact`, because Pages Functions
+  have no rate-limit binding.
+- **Added 2026-10-24:** at most 3 links per message (spam written by people is almost always link lists), and with
+  real Turnstile keys the function accepts only `viliamkratky.dev`. The same function also answers on `*.pages.dev`,
+  where the zone's WAF rule does not apply; previews keep working because they use Cloudflare's test keys.
+- **No confirmation email to the sender:** a form that mails arbitrary addresses gets abused. The visitor's address
+  goes into `Reply-To` only.
+- **Privacy:** one line under the submit button saying the message is used only to reply. No consent banner (M10
+  still holds).
+
+### Exceptions this creates
+
+- **Third-party script** (plan §4.11 "no third-party scripts at launch"): Turnstile loads from
+  `challenges.cloudflare.com`, and only when the contact dialog opens; ordinary page views load nothing third party.
+  Owner-approved; chosen over a self-hosted proof of work (ALTCHA) because the site already runs on Cloudflare.
+- **CSP:** `script-src` and `frame-src` need `https://challenges.cloudflare.com`. `connect-src 'self'` and
+  `form-action 'self'` already cover the endpoint.
+
+### Sending: Resend (owner-confirmed 2026-10-15)
+
+Cloudflare Email Service's `send_email` binding is not available to Pages Functions (Workers only; its REST API or a
+separate Worker would work, and the service is still in beta). Resend is one `fetch` call from the function, mature,
+and free up to 100 emails a day. It sends from `contact@viliamkratky.dev` to `site.email`; switching providers later
+touches only that call. `viliamkratky.dev` has no SPF, DKIM or DMARC records yet; verifying the domain in Resend
+adds SPF and DKIM.
+
+### Verified locally
+
+`wrangler pages dev` with Turnstile test keys and `CONTACT_DRY_RUN=1`: foreign or missing `Origin` → 403; honeypot
+and too-fast submissions → silent 200, nothing sent; invalid fields → 422 with per-field messages; missing token →
+403; valid → 200 and the message logged. Re-run on 2026-10-24 after the rebase, plus: 4 links → 422, 3 links → 200;
+a non-test secret on a host other than `viliamkratky.dev` → 403. In the browser: Turnstile loads under the new CSP with no console errors,
+field errors, sent state, draft cleared after sending, error state with the email fallback, mobile full-height and
+dark theme. A production build without the site key contains no dialog and no trigger.
+
+### Owner setup before the form goes live
+
+1. Turnstile (Cloudflare dashboard): add a widget, mode Managed, hostname `viliamkratky.dev`.
+2. Resend: add the domain `viliamkratky.dev`, add its DNS records in Cloudflare, create an API key with sending
+   access for that domain only.
+3. Pages project, Production environment: build variable `PUBLIC_TURNSTILE_SITE_KEY`, secrets
+   `TURNSTILE_SECRET_KEY` and `RESEND_API_KEY`. Preview environment: Cloudflare's test keys
+   (`1x00000000000000000000AA` / `1x0000000000000000000000000000000AA`) and `CONTACT_DRY_RUN=1`.
+4. WAF rate-limiting rule: path equals `/api/contact`, method POST, by IP, block when exceeded.
+5. Redeploy, then send one real message.
