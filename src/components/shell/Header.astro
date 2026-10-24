@@ -9,8 +9,13 @@ const nav = routes.filter((r) => r.inNav);
 const socials = socialLinks(site);
 ---
 
-<!-- Hidden also fades out: iOS paints content above the viewport under the status bar, where a header that only slid up stays half visible. -->
-<header id="site-header" class="pointer-events-none fixed inset-x-0 top-0 z-50 text-white mix-blend-difference transition-[translate,opacity] duration-500 ease-out data-[hidden=true]:-translate-y-full data-[hidden=true]:opacity-0">
+<!--
+  Hiding fades the header out with a short drift up rather than sliding it off by its own
+  height: iOS paints content above the viewport under the status bar, where a slid-off
+  header stays half visible. Hiding is faster than revealing. While hidden its links ignore
+  pointers (they would otherwise be invisible tap targets) but stay focusable, and focus reveals it.
+-->
+<header id="site-header" class="pointer-events-none fixed inset-x-0 top-0 z-50 text-white mix-blend-difference transition-[translate,opacity] duration-(--dur-3) ease-(--ease-out) data-[hidden=true]:-translate-y-3 data-[hidden=true]:opacity-0 data-[hidden=true]:duration-(--dur-2) data-[hidden=true]:[&_*]:pointer-events-none">
   <div class="container-page flex h-(--header-h) items-center justify-between gap-6">
     <a href="/" class="pointer-events-auto -my-3 py-3 font-display text-[15px] font-semibold tracking-[-0.02em]" aria-label={`${site.name}, home`}>
       <span class="roll"><span>{site.name}</span><span aria-hidden="true">{site.name}</span></span>

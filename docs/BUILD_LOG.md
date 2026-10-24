@@ -132,3 +132,10 @@ production, excluded from the sitemap). The owner approved Hubot Sans with the k
 - The work-list cursor preview no longer shows a dithered accent-red version first and swaps to the image after a
   fixed 380 ms + 500 ms fade. The owner found the forced wait an anti-pattern. All previews are now fetched and decoded
   as the list approaches the viewport, and hovering shows the real image at once (fine pointers only, as before).
+
+## 2026-10-24: Mobile polish
+
+- Touch: the work list is static, every title at full ink. The scroll-driven focus (the row at mid-viewport stayed
+  dark, the others faded to 16 %) is removed at the owner's request. Hover emphasis on fine pointers is unchanged.
+- Header: hiding is a 240 ms fade with a 12 px drift up, revealing 500 ms, both on `--ease-out`. It no longer slides
+  off by its own height, which iOS left half visible under the status bar.
