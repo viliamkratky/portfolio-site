@@ -46,6 +46,8 @@
 
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  /* CSS `ease`: for fades. A strong ease-out makes opacity look like it pops in. */
+  --ease-soft: cubic-bezier(0.25, 0.1, 0.25, 1);
 
   --breakpoint-xs: 30rem;
 }

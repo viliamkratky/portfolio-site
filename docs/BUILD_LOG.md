@@ -137,5 +137,6 @@ production, excluded from the sitemap). The owner approved Hubot Sans with the k
 
 - Touch: the work list is static, every title at full ink. The scroll-driven focus (the row at mid-viewport stayed
   dark, the others faded to 16 %) is removed at the owner's request. Hover emphasis on fine pointers is unchanged.
-- Header: hiding is a 240 ms fade with a 12 px drift up, revealing 500 ms, both on `--ease-out`. It no longer slides
-  off by its own height, which iOS left half visible under the status bar.
+- Header: hiding is a 240 ms fade with a 12 px drift up, revealing 500 ms. The drift runs on `--ease-out`, the fade on
+  the softer `--ease-soft` (CSS `ease`): on the strong ease-out the header was 83 % visible after 125 ms and read as
+  popping in. It no longer slides off by its own height, which iOS left half visible under the status bar.

@@ -12,10 +12,11 @@ const socials = socialLinks(site);
 <!--
   Hiding fades the header out with a short drift up rather than sliding it off by its own
   height: iOS paints content above the viewport under the status bar, where a slid-off
-  header stays half visible. Hiding is faster than revealing. While hidden its links ignore
+  header stays half visible. Hiding is faster than revealing; the drift decelerates on
+  --ease-out while the fade runs on the softer --ease-soft. While hidden its links ignore
   pointers (they would otherwise be invisible tap targets) but stay focusable, and focus reveals it.
 -->
-<header id="site-header" class="pointer-events-none fixed inset-x-0 top-0 z-50 text-white mix-blend-difference transition-[translate,opacity] duration-(--dur-3) ease-(--ease-out) data-[hidden=true]:-translate-y-3 data-[hidden=true]:opacity-0 data-[hidden=true]:duration-(--dur-2) data-[hidden=true]:[&_*]:pointer-events-none">
+<header id="site-header" class="pointer-events-none fixed inset-x-0 top-0 z-50 text-white mix-blend-difference data-[hidden=true]:-translate-y-3 data-[hidden=true]:opacity-0 data-[hidden=true]:[&_*]:pointer-events-none">
   <div class="container-page flex h-(--header-h) items-center justify-between gap-6">
     <a href="/" class="pointer-events-auto -my-3 py-3 font-display text-[15px] font-semibold tracking-[-0.02em]" aria-label={`${site.name}, home`}>
       <span class="roll"><span>{site.name}</span><span aria-hidden="true">{site.name}</span></span>
@@ -112,6 +113,17 @@ const socials = socialLinks(site);
     <button type="button" data-theme-toggle class="t-meta -my-3 py-3"><span data-theme-label>Dark</span> mode</button>
   </div>
 </dialog>
+
+<style>
+  #site-header {
+    transition:
+      translate var(--dur-3) var(--ease-out),
+      opacity var(--dur-3) var(--ease-soft);
+  }
+  #site-header[data-hidden='true'] {
+    transition-duration: var(--dur-2);
+  }
+</style>
 
 <script>
   const dialog = document.getElementById('mobile-menu') as HTMLDialogElement;
