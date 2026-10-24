@@ -8,8 +8,9 @@ import { site } from '../../config/site';
 import { CONTACT_LIMITS, HONEYPOT } from '../../lib/contact';
 import { contactFormEnabled, turnstileSiteKey } from '../../lib/turnstile';
 
+// Focus is ink, not the site-wide accent ring: in a form, red reads as an error, so red is kept for errors only.
 const input =
-  'w-full rounded-md border border-fg-3 bg-bg px-3.5 py-3 text-[16px] text-fg transition-colors duration-(--dur-1) placeholder:text-fg-3 hover:border-fg focus-visible:border-fg aria-[invalid=true]:border-accent-ink';
+  'w-full rounded-md border border-fg-3 bg-bg px-3.5 py-3 text-[16px] text-fg transition-[border-color,box-shadow] duration-(--dur-1) placeholder:text-fg-3 hover:border-fg focus-visible:border-fg focus-visible:ring-1 focus-visible:ring-fg focus-visible:outline-hidden aria-[invalid=true]:border-accent-ink aria-[invalid=true]:focus-visible:ring-accent-ink';
 const label = 't-meta text-fg-3';
 const error = 'text-[14px] text-accent-ink';
 ---
