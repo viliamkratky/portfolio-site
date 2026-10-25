@@ -132,6 +132,30 @@
 #site-header {
   view-transition-name: site-header;
 }
+/* In-page anchor jump (motion.ts): the page that arrives rises a little, so the jump reads as
+   moving down the page rather than a reload. */
+:root[data-vt='anchor']::view-transition-old(root) {
+  animation: vt-fade-out var(--dur-2) var(--ease-soft) both;
+}
+:root[data-vt='anchor']::view-transition-new(root) {
+  animation: vt-rise var(--dur-3) var(--ease-out) both;
+}
+/* The project titles carry inline names for the morph into their pages; here they would fly in from
+   far below on their own. !important is what overrides an inline style. */
+:root[data-vt='anchor'] .work-title > span {
+  view-transition-name: none !important;
+}
+@keyframes vt-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes vt-rise {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+}
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-group(*),
   ::view-transition-old(*),
