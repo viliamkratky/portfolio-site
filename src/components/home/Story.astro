@@ -8,25 +8,31 @@ const second = ['To', 'a', 'working', 'system.'];
 ---
 
 <!--
-  Pinned scenes are position: fixed, so the section must cover the large viewport
-  (mobile browser bars collapsed); otherwise the page shows through below it. iOS Safari
-  also shows the page under its floating toolbar, past the large viewport, so the section
-  runs 8rem further; the text keeps its own large-viewport box. Its bottom padding keeps
-  the text centred in the small viewport, where it is always visible.
-  The canvas also reaches above the section: iOS paints what lies above the viewport under
+  The scene pins with position: sticky. The browser keeps it in step with native (iOS
+  momentum) scrolling; a JS pin switched to position: fixed a frame late and jumped on the
+  way in and out. With JS, motion.ts sets --story-run, the scroll length of the scene, and
+  the section grows by it; without JS or with reduced motion it is just the scene.
+  The scene must cover the large viewport (mobile browser bars collapsed); otherwise the
+  page shows through below it. iOS Safari also shows the page under its floating toolbar,
+  past the large viewport, so the scene runs 8rem further; the text keeps its own
+  large-viewport box. Its bottom padding keeps the text centred in the small viewport,
+  where it is always visible.
+  The canvas also reaches above the scene: iOS paints what lies above the viewport under
   the status bar, which would otherwise stay light while the scene turns dark. The field
   fills the top last, so the overhang is empty while it overlaps the hero (reduced motion
   draws it full from the start, so it gets no overhang).
 -->
-<section class="story relative h-[calc(100lvh+8rem)] overflow-x-clip" data-story aria-label="From an unclear problem to a working system.">
-  <canvas class="pointer-events-none absolute inset-x-0 bottom-0 h-[calc(100%+6rem)] w-full motion-reduce:h-full" aria-hidden="true"></canvas>
-  <div class="absolute inset-x-0 top-0 grid h-lvh place-items-center pb-[calc(100lvh-100svh)]">
-    <p class="s1 t-mega container-page absolute text-center" aria-hidden="true">
-      {first.map((w) => <><span class="mask"><span class="word">{w}</span></span>{' '}</>)}
-    </p>
-    <p class="s2 t-mega container-page absolute text-center text-bg" aria-hidden="true">
-      {second.map((w) => <><span class="mask"><span class="word">{w}</span></span>{' '}</>)}
-    </p>
+<section class="story relative h-[calc(100lvh+8rem+var(--story-run,0px))]" data-story aria-label="From an unclear problem to a working system.">
+  <div class="sticky top-0 h-[calc(100lvh+8rem)] overflow-x-clip" data-story-scene>
+    <canvas class="pointer-events-none absolute inset-x-0 bottom-0 h-[calc(100%+6rem)] w-full motion-reduce:h-full" aria-hidden="true"></canvas>
+    <div class="absolute inset-x-0 top-0 grid h-lvh place-items-center pb-[calc(100lvh-100svh)]">
+      <p class="s1 t-mega container-page absolute text-center" aria-hidden="true">
+        {first.map((w) => <><span class="mask"><span class="word">{w}</span></span>{' '}</>)}
+      </p>
+      <p class="s2 t-mega container-page absolute text-center text-bg" aria-hidden="true">
+        {second.map((w) => <><span class="mask"><span class="word">{w}</span></span>{' '}</>)}
+      </p>
+    </div>
   </div>
 </section>
 
