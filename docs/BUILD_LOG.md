@@ -161,6 +161,17 @@ production, excluded from the sitemap). The owner approved Hubot Sans with the k
   which left a light strip under the dark field. The text keeps its own `100lvh` box, so it sits where it did.
 - Both verified by the owner on an iPhone through the branch preview before merging.
 
+## 2026-10-25: Landscape on notched iPhones
+
+- The viewport asks for `viewport-fit=cover` and `--gutter` grows to the safe-area inset, so in Safari the page runs
+  edge to edge in landscape while content stays clear of the notch.
+- Brave on iOS still letterboxes: it uses Chromium's iOS web layer, which insets the web view itself by the safe
+  area unless the app reports `viewport-fit=cover`, and Brave doesn't. The strips are the app's own views, outside the
+  page, so no CSS reaches them. Recolouring the html background for them was tried and removed; it changed nothing
+  there. Not fixable from the site.
+- The mobile menu focuses itself on open (its first link showed the accent focus ring on touch), its links shrink
+  with the viewport height so it fits a phone held sideways, and below `md` Dark and Menu share a baseline.
+
 ---
 
 ---

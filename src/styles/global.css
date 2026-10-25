@@ -164,27 +164,13 @@
     overflow: hidden;
   }
 
-  /*
-   * WebKit fills the strips beside the notch (a browser that letterboxes in landscape) and
-   * the overscroll area with the html background, unless body has its own on top. So body
-   * stays transparent, html takes the colour of a dark scene (motion.ts), and the page
-   * paints its own background on a fixed layer behind the content.
-   */
   body {
     min-height: 100svh;
+    background: var(--bg);
     font-size: 17px;
     line-height: 1.55;
     letter-spacing: -0.005em;
     overflow-x: clip;
-  }
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    background: var(--bg);
-    transition: background-color 500ms var(--ease-out);
-    pointer-events: none;
   }
 
   ::selection {
