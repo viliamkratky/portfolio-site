@@ -121,6 +121,32 @@ function kineticLoop(now: number) {
   requestAnimationFrame(kineticLoop);
 }
 
+/* -------------------------------------------------------- notch strips --- */
+
+/*
+ * In landscape on a notched iPhone, a browser that keeps the page inside the safe area
+ * (Chrome on iOS ignores viewport-fit=cover) paints the strips beside the notch with the
+ * root background. The root takes the colour of the full-bleed dark scene across the middle
+ * of the screen, so the strips read as part of it; html already fades its background.
+ */
+const bleeds: [Element, () => string | null][] = [];
+let bleed = '';
+function updateBleed() {
+  const mid = innerHeight / 2;
+  const hit = bleeds.find(([el]) => {
+    const r = el.getBoundingClientRect();
+    return r.top <= mid && r.bottom > mid;
+  });
+  const next = hit?.[1]() ?? '';
+  if (next === bleed) return;
+  bleed = next;
+  root.style.backgroundColor = next;
+}
+document.querySelectorAll<HTMLElement>('[data-bleed]').forEach((el) => bleeds.push([el, () => getComputedStyle(el).backgroundColor]));
+addEventListener('scroll', updateBleed, { passive: true });
+addEventListener('resize', updateBleed);
+updateBleed();
+
 /* ------------------------------------------------------- halftone story --- */
 
 function setupStory(tl: (el: HTMLElement) => gsap.core.Timeline | null) {
@@ -129,6 +155,7 @@ function setupStory(tl: (el: HTMLElement) => gsap.core.Timeline | null) {
     const ctx = canvas.getContext('2d')!;
     const state = { p: reduce ? 1 : 0 };
     const draw = () => {
+      updateBleed();
       const w = canvas.clientWidth;
       const h = canvas.clientHeight;
       const step = 16;
@@ -153,6 +180,8 @@ function setupStory(tl: (el: HTMLElement) => gsap.core.Timeline | null) {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       draw();
     };
+    // Past half way the field covers the middle of the scene and reaches its edges.
+    bleeds.push([story, () => (state.p > 0.5 ? getComputedStyle(root).getPropertyValue('--invert') : null)]);
     size();
     addEventListener('resize', size);
     new MutationObserver(draw).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
