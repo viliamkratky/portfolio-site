@@ -208,6 +208,11 @@
     border-radius: 2px;
   }
 
+  /* Anchor targets take focus only so Tab continues from them; they are not controls. */
+  [tabindex='-1']:focus {
+    outline: none;
+  }
+
   a {
     color: inherit;
     text-decoration: none;
