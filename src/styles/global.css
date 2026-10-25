@@ -170,11 +170,6 @@
     letter-spacing: -0.005em;
     overflow-x: clip;
   }
-  /* Set while the pinned story scene is dark at its bottom edge (see motion.ts). */
-  html[data-story-dark],
-  html[data-story-dark] body {
-    background: var(--invert);
-  }
 
   ::selection {
     background: var(--accent);
