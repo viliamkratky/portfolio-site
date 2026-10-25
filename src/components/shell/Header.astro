@@ -52,7 +52,10 @@ const socials = socialLinks(site);
         )
       }
       <button type="button" data-theme-toggle class="t-meta hidden sm:inline-flex" aria-label="Toggle dark mode">
-        <span class="roll"><span data-theme-label>Dark</span><span aria-hidden="true" data-theme-label>Dark</span></span>
+        <span class="roll">
+          <span class="theme-word"><span data-on="light">Dark</span><span data-on="dark">Light</span></span>
+          <span class="theme-word" aria-hidden="true"><span data-on="light">Dark</span><span data-on="dark">Light</span></span>
+        </span>
       </button>
       <button
         type="button"
@@ -112,7 +115,7 @@ const socials = socialLinks(site);
   }
   <div class="container-page flex items-center justify-between pb-8">
     <button type="button" data-menu-open="search" data-js-only hidden class="t-meta -my-3 py-3">Search & commands</button>
-    <button type="button" data-theme-toggle class="t-meta -my-3 py-3"><span data-theme-label>Dark</span> mode</button>
+    <button type="button" data-theme-toggle class="t-meta -my-3 py-3"><span class="theme-word justify-items-end"><span data-on="light">Dark</span><span data-on="dark">Light</span></span> mode</button>
   </div>
 </dialog>
 
@@ -167,11 +170,6 @@ const socials = socialLinks(site);
   header.addEventListener('focusin', () => (header.dataset.hidden = 'false'));
 
   const root = document.documentElement;
-  const sync = () => {
-    const dark = root.dataset.theme === 'dark';
-    document.querySelectorAll('[data-theme-label]').forEach((el) => (el.textContent = dark ? 'Light' : 'Dark'));
-  };
-  sync();
   document.querySelectorAll('[data-theme-toggle]').forEach((b) =>
     b.addEventListener('click', () => {
       const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
@@ -180,7 +178,6 @@ const socials = socialLinks(site);
         try {
           localStorage.setItem('vk:theme', next);
         } catch {}
-        sync();
       };
       const d = document as Document & { startViewTransition?: (cb: () => void) => unknown };
       if (d.startViewTransition && !matchMedia('(prefers-reduced-motion: reduce)').matches) d.startViewTransition(apply);
