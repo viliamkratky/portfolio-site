@@ -172,6 +172,17 @@ production, excluded from the sitemap). The owner approved Hubot Sans with the k
 - The mobile menu focuses itself on open (its first link showed the accent focus ring on touch), its links shrink
   with the viewport height so it fits a phone held sideways, and below `md` Dark and Menu share a baseline.
 
+## 2026-10-25: Story scene as a native-scroll wipe
+
+- The halftone field and the scrubbed GSAP timeline are gone, at the owner's request. A dark panel (`--invert`)
+  now scrolls up over the pinned "From an unclear problem." and its top edge wipes it into "To a working system.",
+  cutting through the letters. When the panel covers the viewport the scene releases and the page scrolls on.
+- Pure CSS, no JS: the panel clips (`clip-path: inset(0)`) a sticky copy of the scene that starts at the section's
+  top, so both beats stand in the same place and release together. `clip-path` because `overflow: hidden` would
+  stop sticky working. `--story-run` and `setupStory` are removed; only the first beat keeps its `data-reveal`.
+- It works the same without JS and under reduced motion (it only moves as the page scrolls), so there is no
+  separate fallback any more. Needs the owner's iPhone test on the branch preview before merging.
+
 ---
 
 ---

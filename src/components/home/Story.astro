@@ -1,45 +1,40 @@
 ---
 /**
- * Scrollytelling: what I do, told in two beats. A halftone field
- * grows from the bottom and turns the page from light to dark between them.
+ * Scrollytelling: what I do, told in two beats. A dark panel scrolls up over the
+ * first and wipes it into the second along its top edge.
  */
 const first = ['From', 'an', 'unclear', 'problem.'];
-const second = ['To', 'a', 'working', 'system.'];
+const second = 'To a working system.';
 ---
 
 <!--
-  The scene pins with position: sticky. The browser keeps it in step with native (iOS
-  momentum) scrolling; a JS pin switched to position: fixed a frame late and jumped on the
-  way in and out. With JS, motion.ts sets --story-run, the scroll length of the scene, and
-  the section grows by it; without JS or with reduced motion it is just the scene.
-  The scene must cover the large viewport (mobile browser bars collapsed); otherwise the
-  page shows through below it. iOS Safari also shows the page under its floating toolbar,
-  past the large viewport, so the scene runs 8rem further; the text keeps its own
-  large-viewport box. Its bottom padding keeps the text centred in the small viewport,
-  where it is always visible.
-  The canvas also reaches above the scene: iOS paints what lies above the viewport under
-  the status bar, which would otherwise stay light while the scene turns dark. The field
-  fills the top last, so the overhang is empty while it overlaps the hero (reduced motion
-  draws it full from the start, so it gets no overhang).
+  Pure CSS, driven by native scrolling: no JS keeps anything in step, so nothing lags behind iOS
+  momentum scrolling. The scene sticks (position: sticky) while the panel, the next block in the
+  section, scrolls up over it. The panel clips (clip-path, which unlike overflow keeps sticky
+  working) a copy of the scene that starts at the section's top and sticks there too, so the second
+  beat stands exactly where the first does and shows only below the panel's edge. When the panel
+  covers the viewport the section ends: scene and copy release together and the panel scrolls on.
+  The gap between scene and panel is the dwell on the first beat.
+  The scene covers the large viewport (mobile browser bars collapsed) and runs 8rem further, since
+  iOS Safari shows the page under its floating toolbar, past the large viewport. The text keeps its
+  own large-viewport box, and its bottom padding keeps it centred in the small viewport, where it is
+  always visible.
 -->
-<section class="story relative h-[calc(100lvh+8rem+var(--story-run,0px))]" data-story aria-label="From an unclear problem to a working system.">
-  <div class="sticky top-0 h-[calc(100lvh+8rem)] overflow-x-clip" data-story-scene>
-    <canvas class="pointer-events-none absolute inset-x-0 bottom-0 h-[calc(100%+6rem)] w-full motion-reduce:h-full" aria-hidden="true"></canvas>
+<section class="story relative" aria-label="From an unclear problem to a working system.">
+  <div class="sticky top-0 h-[calc(100lvh+8rem)] overflow-x-clip">
     <div class="absolute inset-x-0 top-0 grid h-lvh place-items-center pb-[calc(100lvh-100svh)]">
-      <p class="s1 t-mega container-page absolute text-center" aria-hidden="true">
+      <p class="t-mega container-page text-center" aria-hidden="true" data-reveal>
         {first.map((w) => <><span class="mask"><span class="word">{w}</span></span>{' '}</>)}
-      </p>
-      <p class="s2 t-mega container-page absolute text-center text-bg" aria-hidden="true">
-        {second.map((w) => <><span class="mask"><span class="word">{w}</span></span>{' '}</>)}
       </p>
     </div>
   </div>
+  <div class="relative mt-[40svh] h-[calc(100lvh+8rem)] bg-invert [clip-path:inset(0)]">
+    <div class="absolute inset-x-0 bottom-0 top-[calc(-100lvh-8rem-40svh)]">
+      <div class="sticky top-0 h-[calc(100lvh+8rem)] overflow-x-clip">
+        <div class="absolute inset-x-0 top-0 grid h-lvh place-items-center pb-[calc(100lvh-100svh)]">
+          <p class="t-mega container-page text-center text-bg" aria-hidden="true">{second}</p>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
-
-<style>
-  @media (prefers-reduced-motion: reduce) {
-    .s1 {
-      display: none;
-    }
-  }
-</style>
