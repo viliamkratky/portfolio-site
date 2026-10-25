@@ -347,7 +347,10 @@ document.fonts.ready.then(() => {
   gsap.ticker.lagSmoothing(0);
   (window as unknown as { __lenis: Lenis }).__lenis = lenis;
 
-  // Anchor links go through Lenis so they stay smooth and respect the header.
+  // Anchor links jump instead of scrolling: scrolling to #work would play the whole story scene on
+  // the way. The jump runs inside a view transition, the same crossfade a project page opens with
+  // (see global.css). Lenis applies the CSS scroll-padding and scroll-margin, so the landing spot is
+  // set in CSS.
   document.addEventListener('click', (e) => {
     const a = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[href^="#"], a[href^="/#"]');
     if (!a) return;
@@ -356,7 +359,13 @@ document.fonts.ready.then(() => {
     const target = hash.length > 1 ? document.querySelector(hash) : null;
     if (!target) return;
     e.preventDefault();
-    lenis.scrollTo(target as HTMLElement, { offset: -80 });
+    const jump = () => lenis.scrollTo(target as HTMLElement, { immediate: true, force: true });
+    const d = document as Document & { startViewTransition?: (cb: () => void) => { finished: Promise<void> } };
+    if (d.startViewTransition) {
+      const root = document.documentElement;
+      root.dataset.vt = 'anchor';
+      d.startViewTransition(jump).finished.finally(() => delete root.dataset.vt);
+    } else jump();
     history.replaceState(null, '', hash);
   });
 
