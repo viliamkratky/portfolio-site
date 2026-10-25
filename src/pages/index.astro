@@ -14,7 +14,8 @@ const count = (await getCollection('work')).length;
   <Hero />
   <Story />
 
-  <section id="work" aria-labelledby="work-title" class="py-[22vh]">
+  <!-- The negative scroll margin cancels the top padding, so #work lands on the heading, not on empty space. -->
+  <section id="work" aria-labelledby="work-title" class="-scroll-mt-[22vh] py-[22vh]">
     <div class="container-page">
       <div class="t-meta flex justify-between text-fg-3" data-nav-item="Selected work">
         <h2 id="work-title" class="text-fg">Selected work</h2>

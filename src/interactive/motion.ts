@@ -347,7 +347,11 @@ document.fonts.ready.then(() => {
   gsap.ticker.lagSmoothing(0);
   (window as unknown as { __lenis: Lenis }).__lenis = lenis;
 
-  // Anchor links go through Lenis so they stay smooth and respect the header.
+  // Anchor links go through Lenis so they stay smooth. Lenis already applies the CSS scroll-padding
+  // and scroll-margin, so the landing spot is set in CSS, not with an offset here. A lerp scroll
+  // jumps most of the way on the first frame; a timed ease-in-out reads as travel instead, and the
+  // duration grows with distance so a short hop isn't sluggish and a long one isn't a blur.
+  const easeInOutCubic = (t: number) => (t < 0.5 ? 4 * t ** 3 : 1 - (-2 * t + 2) ** 3 / 2);
   document.addEventListener('click', (e) => {
     const a = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[href^="#"], a[href^="/#"]');
     if (!a) return;
@@ -356,7 +360,8 @@ document.fonts.ready.then(() => {
     const target = hash.length > 1 ? document.querySelector(hash) : null;
     if (!target) return;
     e.preventDefault();
-    lenis.scrollTo(target as HTMLElement, { offset: -80 });
+    const screens = Math.abs(target.getBoundingClientRect().top) / innerHeight;
+    lenis.scrollTo(target as HTMLElement, { duration: Math.min(0.6 + screens * 0.12, 1.4), easing: easeInOutCubic });
     history.replaceState(null, '', hash);
   });
 
