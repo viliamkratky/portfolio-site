@@ -339,7 +339,7 @@ document.fonts.ready.then(() => {
   }
 
   gsap.registerPlugin(ScrollTrigger);
-  // Mobile URL-bar show/hide changes the viewport height; don't re-layout pinned scenes for it.
+  // Mobile URL-bar show/hide changes the viewport height; don't re-layout scroll scenes for it.
   ScrollTrigger.config({ ignoreMobileResize: true });
   const lenis = new Lenis({ lerp: 0.1 });
   lenis.on('scroll', ScrollTrigger.update);
@@ -360,9 +360,14 @@ document.fonts.ready.then(() => {
     history.replaceState(null, '', hash);
   });
 
-  setupStory((el) =>
-    gsap.timeline({ scrollTrigger: { trigger: el, start: 'top top', end: '+=280%', scrub: 0.8, pin: true } }),
-  );
+  setupStory((el) => {
+    // The scene sticks while the section scrolls past it (see Story.astro).
+    const scene = el.querySelector<HTMLElement>('[data-story-scene]')!;
+    el.style.setProperty('--story-run', '280svh');
+    return gsap.timeline({
+      scrollTrigger: { trigger: el, start: 'top top', end: () => `+=${el.offsetHeight - scene.offsetHeight}`, scrub: 0.8 },
+    });
+  });
   setupReveals();
   setupCursorCard();
   setupMagnets();

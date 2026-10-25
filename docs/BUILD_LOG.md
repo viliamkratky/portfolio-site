@@ -151,6 +151,16 @@ production, excluded from the sitemap). The owner approved Hubot Sans with the k
   the page background dark while the scene is pinned. The scrubbed scene stays as it was. Don't reintroduce these
   without the owner testing them on an iPhone first.
 
+## 2026-10-25: Story scene on iPhone (owner-tested)
+
+- The scene pins with `position: sticky` instead of ScrollTrigger's `pin`. The JS pin switched it to
+  `position: fixed` a frame behind iOS's native momentum scrolling, so it jumped on the way in and out; the browser
+  keeps sticky in step. The section grows by `--story-run` (280svh, set by motion.ts), so without JS or with reduced
+  motion it is only the scene. The scrubbed timeline and where the scene releases are unchanged.
+- The scene runs 8rem past the large viewport. iOS Safari shows the page under its floating toolbar, below `100lvh`,
+  which left a light strip under the dark field. The text keeps its own `100lvh` box, so it sits where it did.
+- Both verified by the owner on an iPhone through the branch preview before merging.
+
 ---
 
 ---
