@@ -38,7 +38,7 @@ const routeKeys = routes.map(({ key, href, label }) => ({ key, href, label }));
 <html lang="en" data-theme="light">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
     {isNotFound ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
@@ -96,7 +96,7 @@ const routeKeys = routes.map(({ key, href, label }) => ({ key, href, label }));
       role="status"
       aria-live="polite"
       data-visible="false"
-      class="t-meta pointer-events-none fixed bottom-4 left-4 z-[90] rounded-full bg-fg px-3.5 py-2 text-bg opacity-0 transition-[opacity,transform] duration-(--dur-2) data-[visible=true]:translate-y-0 data-[visible=true]:opacity-100 translate-y-1"
+      class="t-meta pointer-events-none fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] left-[max(1rem,env(safe-area-inset-left))] z-[90] rounded-full bg-fg px-3.5 py-2 text-bg opacity-0 transition-[opacity,transform] duration-(--dur-2) data-[visible=true]:translate-y-0 data-[visible=true]:opacity-100 translate-y-1"
     >
     </div>
 

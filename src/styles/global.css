@@ -75,7 +75,9 @@
   --dur-2: 240ms;
   --dur-3: 500ms;
   --dur-4: 900ms;
-  --gutter: 16px;
+  /* Landscape iPhones: keep content clear of the notch now that the page runs edge to edge. */
+  --safe-x: max(env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px));
+  --gutter: max(16px, var(--safe-x));
   --header-h: 64px;
   color-scheme: light;
 }
@@ -102,7 +104,7 @@
 
 @media (min-width: 48rem) {
   :root {
-    --gutter: clamp(24px, 3vw, 40px);
+    --gutter: max(clamp(24px, 3vw, 40px), var(--safe-x));
   }
 }
 

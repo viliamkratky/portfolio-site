@@ -37,7 +37,7 @@ const socials = socialLinks(site);
       }
     </nav>
 
-    <div class="pointer-events-auto flex items-center gap-5">
+    <div class="pointer-events-auto flex items-center gap-5 max-md:items-baseline">
       {
         socials.length > 0 && (
           <ul class="hidden items-center gap-1 lg:flex" aria-label="Profiles">
@@ -75,7 +75,8 @@ const socials = socialLinks(site);
 <dialog
   id="mobile-menu"
   aria-label="Menu"
-  class="m-0 h-dvh max-h-none w-screen max-w-none bg-bg p-0 text-fg backdrop:bg-transparent open:flex open:flex-col"
+  tabindex="-1"
+  class="m-0 h-dvh max-h-none w-screen max-w-none bg-bg p-0 text-fg backdrop:bg-transparent focus-visible:outline-none open:flex open:flex-col"
 >
   <div class="container-page flex h-(--header-h) shrink-0 items-center justify-between">
     <a href="/" class="font-display text-[15px] font-semibold tracking-[-0.02em]">{site.name}</a>
@@ -86,7 +87,7 @@ const socials = socialLinks(site);
       {
         routes.map((r, i) => (
           <li>
-            <a href={r.href} aria-current={isCurrent(r.href) ? 'page' : undefined} class="flex items-start gap-3 font-display text-[clamp(3rem,15vw,5rem)] leading-[0.95] font-semibold tracking-[-0.045em] text-fg-3 aria-[current=page]:text-fg">
+            <a href={r.href} aria-current={isCurrent(r.href) ? 'page' : undefined} class="flex items-start gap-3 font-display text-[min(clamp(3rem,15vw,5rem),11svh)] leading-[0.95] font-semibold tracking-[-0.045em] text-fg-3 aria-[current=page]:text-fg">
               {r.label}
               <span class="t-meta mt-3 text-accent-ink">{String(i + 1).padStart(2, '0')}</span>
             </a>
@@ -128,7 +129,11 @@ const socials = socialLinks(site);
 
 <script>
   const dialog = document.getElementById('mobile-menu') as HTMLDialogElement;
-  document.getElementById('menu-button')!.addEventListener('click', () => dialog.showModal());
+  document.getElementById('menu-button')!.addEventListener('click', () => {
+    dialog.showModal();
+    // showModal() focuses the first link, which iOS then rings as if it were selected.
+    dialog.focus();
+  });
   dialog.querySelector('[data-close]')!.addEventListener('click', () => dialog.close());
   dialog.addEventListener('click', (e) => {
     if ((e.target as HTMLElement).closest('a, [data-menu-open]')) dialog.close();
