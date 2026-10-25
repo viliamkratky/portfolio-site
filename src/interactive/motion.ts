@@ -367,6 +367,11 @@ document.fonts.ready.then(() => {
       d.startViewTransition(jump).finished.finally(() => delete root.dataset.vt);
     } else jump();
     history.replaceState(null, '', hash);
+    // preventDefault also cancels the native focus move, so do it here: Tab must continue from the
+    // target (the skip link depends on this), not from the link that was activated.
+    const el = target as HTMLElement;
+    if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '-1');
+    el.focus({ preventScroll: true });
   });
 
   setupStory((el) => {
