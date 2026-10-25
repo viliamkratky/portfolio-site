@@ -1,5 +1,11 @@
 ---
 import { site } from '../../config/site';
+import { contactFormEnabled } from '../../lib/turnstile';
+import Button from '../ui/Button.astro';
+
+const contactHref = site.email ? `mailto:${site.email}` : '/contact';
+// Same behaviour as the contact section: with JS the CTA opens the dialog, without JS it stays a mailto: link.
+const opensDialog = contactFormEnabled && Boolean(site.email);
 ---
 
 <section id="intro" class="relative flex min-h-svh flex-col pt-(--header-h)" aria-labelledby="hero-title">
@@ -7,9 +13,6 @@ import { site } from '../../config/site';
     <p class="flex flex-wrap items-baseline gap-x-4 gap-y-2">
       <span class="size-[9px] self-center bg-accent" aria-hidden="true"></span>
       <span class="text-[15px] font-semibold tracking-[-0.01em]">{site.role}</span>
-      <span class="t-meta text-fg-3">
-        Portfolio ’{new Date().getFullYear().toString().slice(2)}{site.available && ' · Available for new projects'}
-      </span>
     </p>
 
     <h1 id="hero-title" class="mt-[2vh]" aria-label={site.name}>
@@ -19,14 +22,26 @@ import { site } from '../../config/site';
       ))}
     </h1>
 
-    <div class="mt-[4vh] flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
-      <p class="hero-line font-display md:shrink-0" data-reveal>
+    <!-- Up to lg: tagline, copy, CTA. From lg the copy and CTA take the left edge under the name, the tagline the right. -->
+    <div class="mt-[4vh] grid gap-8 lg:grid-cols-[auto_auto] lg:justify-between lg:gap-x-12 lg:gap-y-10">
+      <p class="hero-line font-display lg:col-start-2 lg:row-span-2 lg:row-start-1" data-reveal>
         {'Design on the surface. Engineering underneath.'.split(' ').map((w) => <><span class="mask"><span class="word">{w}</span></span> </>)}
       </p>
-      <p class="max-w-[34ch] text-[clamp(1.0625rem,0.9rem+0.5vw,1.375rem)] leading-[1.45] text-fg-3 md:max-w-[30ch] md:shrink" data-reveal>
+      <p class="max-w-[34ch] text-[clamp(1.0625rem,0.9rem+0.5vw,1.375rem)] leading-[1.45] text-fg-3 lg:col-start-1 lg:row-start-1 lg:max-w-[30ch]" data-reveal>
         I take digital products from an unclear problem to a polished, working system: interface, frontend, backend, AI
         and the infrastructure that ships it.
       </p>
+      <div class="flex flex-wrap gap-3 lg:col-start-1 lg:row-start-2" data-reveal>
+        <Button
+          href={contactHref}
+          arrow
+          data-contact-open={opensDialog ? '' : undefined}
+          aria-haspopup={opensDialog ? 'dialog' : undefined}
+        >
+          Let’s talk
+        </Button>
+        <Button href="#work" variant="secondary">Selected work</Button>
+      </div>
     </div>
   </div>
 
