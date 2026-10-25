@@ -144,6 +144,13 @@ production, excluded from the sitemap). The owner approved Hubot Sans with the k
   ignored. iOS nudges `scrollY` back and forth while its toolbars resize at the start of a scroll; with the old 6 px
   per-event check the header started hiding, turned back and stalled, then hid.
 
+## 2026-10-25: Story scene changes reverted
+
+- Tried and reverted at the owner's request (iPhone: stuttering, unreliable): playing the two beats in time instead
+  of scrubbing them, a shorter pin on touch, one fitted size for both beats, ending the field on halftone, and turning
+  the page background dark while the scene is pinned. The scrubbed scene stays as it was. Don't reintroduce these
+  without the owner testing them on an iPhone first.
+
 ---
 
 ---
