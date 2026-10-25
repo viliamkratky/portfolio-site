@@ -125,9 +125,10 @@ function kineticLoop(now: number) {
 
 /*
  * In landscape on a notched iPhone, a browser that keeps the page inside the safe area
- * (Chrome on iOS ignores viewport-fit=cover) paints the strips beside the notch with the
- * root background. The root takes the colour of the full-bleed dark scene across the middle
- * of the screen, so the strips read as part of it; html already fades its background.
+ * (Brave and Chrome on iOS ignore viewport-fit=cover) paints the strips beside the notch
+ * with the html background; the page itself paints on a layer above it (global.css). html
+ * takes the colour of the full-bleed dark scene across the middle of the screen, so the
+ * strips read as part of it, and fades it.
  */
 const bleeds: [Element, () => string | null][] = [];
 let bleed = '';
