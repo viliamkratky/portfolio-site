@@ -144,21 +144,6 @@ production, excluded from the sitemap). The owner approved Hubot Sans with the k
   ignored. iOS nudges `scrollY` back and forth while its toolbars resize at the start of a scroll; with the old 6 px
   per-event check the header started hiding, turned back and stalled, then hid.
 
-## 2026-10-24: Story scene
-
-- The two beats play in time instead of being scrubbed. Scroll position only picks the beat (the first rises as the
-  section comes in, the second takes over 40 % into the pin), and each beat always finishes. Scrubbed, the scene
-  froze half-way wherever a scroll stopped, and a fast flick on a phone released the pin before the second beat had
-  caught up.
-- Touch pins the scene for 180 % of the viewport, fine pointers for 280 %.
-- Both beats share one fitted size: on a phone the longest word spans the content width, on wide screens the block
-  height (62 % of the small viewport) limits it.
-- The field stops with its top third still halftone instead of filling solid. The section has its own `--bg` so
-  the gaps stay light.
-- While the scene is pinned and dark at its bottom edge, the page background is `--invert`. iOS Safari's floating
-  toolbar reaches past the large viewport the section covers and showed a light strip of page below it.
-- The hero paragraph no longer repeats the story's "unclear problem → working system" line.
-
 ---
 
 ---
