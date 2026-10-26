@@ -181,7 +181,7 @@ production, excluded from the sitemap). The owner approved Hubot Sans with the k
   top, so both beats stand in the same place and release together. `clip-path` because `overflow: hidden` would
   stop sticky working. `--story-run` and `setupStory` are removed; only the first beat keeps its `data-reveal`.
 - It works the same without JS and under reduced motion (it only moves as the page scrolls), so there is no
-  separate fallback any more. Needs the owner's iPhone test on the branch preview before merging.
+  separate fallback any more. Verified by the owner on an iPhone through the branch preview before merging.
 
 ---
 
