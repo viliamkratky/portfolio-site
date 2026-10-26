@@ -11,7 +11,6 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const finePointer = matchMedia('(any-hover: hover) and (any-pointer: fine)').matches;
-const root = document.documentElement;
 
 export const mouse = { x: -9999, y: -9999, moved: 0 };
 addEventListener(
@@ -119,53 +118,6 @@ function kineticLoop(now: number) {
     });
   }
   requestAnimationFrame(kineticLoop);
-}
-
-/* ------------------------------------------------------- halftone story --- */
-
-function setupStory(tl: (el: HTMLElement) => gsap.core.Timeline | null) {
-  document.querySelectorAll<HTMLElement>('[data-story]').forEach((story) => {
-    const canvas = story.querySelector<HTMLCanvasElement>('canvas')!;
-    const ctx = canvas.getContext('2d')!;
-    const state = { p: reduce ? 1 : 0 };
-    const draw = () => {
-      const w = canvas.clientWidth;
-      const h = canvas.clientHeight;
-      const step = 16;
-      ctx.clearRect(0, 0, w, h);
-      ctx.fillStyle = getComputedStyle(root).getPropertyValue('--invert');
-      for (let y = step / 2; y < h + step; y += step) {
-        const fromBottom = 1 - y / h;
-        for (let x = step / 2; x < w + step; x += step) {
-          const n = Math.sin(x * 0.013 + y * 0.008) * 0.08 * Math.min(1, state.p * 4);
-          const local = Math.min(1, Math.max(0, state.p * 2.15 - fromBottom * 0.9 + n));
-          if (local <= 0.01) continue;
-          ctx.beginPath();
-          ctx.arc(x, y, step * 0.74 * local, 0, Math.PI * 2);
-          ctx.fill();
-        }
-      }
-    };
-    const size = () => {
-      const dpr = Math.min(2, devicePixelRatio);
-      canvas.width = canvas.clientWidth * dpr;
-      canvas.height = canvas.clientHeight * dpr;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      draw();
-    };
-    size();
-    addEventListener('resize', size);
-    new MutationObserver(draw).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
-
-    const t = tl(story);
-    if (!t) return;
-    t.from(story.querySelectorAll('.s1 .word'), { yPercent: 160, rotate: 4, duration: 1, stagger: 0.12, ease: 'power3.out' })
-      .to({}, { duration: 0.5 })
-      .to(story.querySelector('.s1'), { opacity: 0, scale: 0.9, filter: 'blur(10px)', duration: 0.9 })
-      .to(state, { p: 1, duration: 1.4, ease: 'none', onUpdate: draw }, '<0.1')
-      .from(story.querySelectorAll('.s2 .word'), { yPercent: 160, rotate: 4, duration: 1, stagger: 0.15, ease: 'power3.out' }, '-=0.5')
-      .to({}, { duration: 0.6 });
-  });
 }
 
 /* ---------------------------------------------------- work cursor card --- */
@@ -333,10 +285,7 @@ document.fonts.ready.then(() => {
   fitAll();
   fitWorkTitles();
 
-  if (reduce) {
-    setupStory(() => null);
-    return;
-  }
+  if (reduce) return;
 
   gsap.registerPlugin(ScrollTrigger);
   // Mobile URL-bar show/hide changes the viewport height; don't re-layout scroll scenes for it.
@@ -374,14 +323,6 @@ document.fonts.ready.then(() => {
     el.focus({ preventScroll: true });
   });
 
-  setupStory((el) => {
-    // The scene sticks while the section scrolls past it (see Story.astro).
-    const scene = el.querySelector<HTMLElement>('[data-story-scene]')!;
-    el.style.setProperty('--story-run', '280svh');
-    return gsap.timeline({
-      scrollTrigger: { trigger: el, start: 'top top', end: () => `+=${el.offsetHeight - scene.offsetHeight}`, scrub: 0.8 },
-    });
-  });
   setupReveals();
   setupCursorCard();
   setupMagnets();
