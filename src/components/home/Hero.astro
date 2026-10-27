@@ -16,9 +16,9 @@ const opensDialog = contactFormEnabled && Boolean(site.email);
     </p>
 
     <h1 id="hero-title" class="mt-[2vh]" aria-label={site.name}>
-      <span class="kinetic fit display hero-name hidden sm:block" data-kinetic data-rest="560" data-fit="0.97">{site.name.toUpperCase()}</span>
+      <span class="kinetic fit display hero-name hidden sm:block" data-kinetic data-rest="560" data-fit="1" data-fit-peak>{site.name.toUpperCase()}</span>
       {site.name.toUpperCase().split(' ').map((part) => (
-        <span class="kinetic fit display hero-name sm:hidden" data-kinetic data-rest="560" data-fit="0.97">{part}</span>
+        <span class="kinetic fit display hero-name sm:hidden" data-kinetic data-rest="560" data-fit="1" data-fit-peak>{part}</span>
       ))}
     </h1>
 

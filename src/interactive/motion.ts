@@ -25,7 +25,11 @@ addEventListener(
 
 /* ------------------------------------------------------------ fit text --- */
 
-/** Scales `.fit` lines so they fill their container's content width at rest. */
+/**
+ * Scales `.fit` lines so they fill their container's content width at rest. With `data-fit-peak`
+ * a kinetic line is measured at the widest point of its breathing instead, so at full breath it
+ * reaches the right edge of the content, as far in as the left one.
+ */
 function fitAll() {
   document.querySelectorAll<HTMLElement>('.fit').forEach((el) => {
     const parent = el.parentElement!;
@@ -33,11 +37,12 @@ function fitAll() {
     const avail = parent.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
     el.style.fontSize = '100px';
     el.style.display = 'inline-block';
-    const w = el.getBoundingClientRect().width;
+    const k = kinetics.find((k) => k.el === el);
+    const w = k && !reduce && el.hasAttribute('data-fit-peak') ? breathPeakWidth(k) : el.getBoundingClientRect().width;
     el.style.display = '';
     if (!w || !avail) return;
     const ratio = Number(el.dataset.fit ?? 0.96);
-    el.style.fontSize = `${Math.floor(((100 * avail) / w) * ratio)}px`;
+    el.style.fontSize = `${Math.floor(((1000 * avail) / w) * ratio) / 10}px`;
   });
 }
 
@@ -70,7 +75,42 @@ function fitWorkTitles() {
 /* ------------------------------------------------- kinetic typography --- */
 
 type Char = { el: HTMLElement; w: number; s: number };
-const kinetics: { el: HTMLElement; chars: Char[]; rest: number; max: number }[] = [];
+type Kinetic = { el: HTMLElement; chars: Char[]; rest: number; max: number };
+const kinetics: Kinetic[] = [];
+
+/** Idle breathing: a wave running through the letters, 0 (narrowest) to 0.5 (widest). */
+function breath(phase: number, i: number) {
+  const t = (Math.sin(phase - i * 0.45) + 1) / 2;
+  return t * t * 0.5;
+}
+
+const axes = (k: Kinetic, t: number) => `"wght" ${k.rest + (k.max - k.rest) * t}, "wdth" ${92 + 33 * t}`;
+
+/**
+ * Line width at the widest moment of the breathing wave. Each letter is measured narrowest and
+ * widest and interpolated in between to find that moment over one period of the wave.
+ */
+function breathPeakWidth(k: Kinetic) {
+  const measure = (t: number) =>
+    k.chars.map((c) => {
+      c.el.style.fontVariationSettings = axes(k, t);
+      return c.el.getBoundingClientRect().width;
+    });
+  const narrow = measure(0);
+  const wide = measure(0.5);
+  let peak = 0;
+  let peakPhase = 0;
+  for (let phase = 0; phase < 2 * Math.PI; phase += 0.02) {
+    let sum = 0;
+    k.chars.forEach((_, i) => (sum += narrow[i] + (wide[i] - narrow[i]) * breath(phase, i) * 2));
+    if (sum > peak) [peak, peakPhase] = [sum, phase];
+  }
+  // Glyph widths don't follow the axes exactly linearly, so measure the line itself at that phase.
+  k.chars.forEach((c, i) => (c.el.style.fontVariationSettings = axes(k, breath(peakPhase, i))));
+  const width = k.el.getBoundingClientRect().width;
+  k.chars.forEach((c) => (c.el.style.fontVariationSettings = `"wght" ${c.w.toFixed(1)}, "wdth" ${c.s.toFixed(1)}`));
+  return width;
+}
 
 function splitKinetic() {
   document.querySelectorAll<HTMLElement>('[data-kinetic]').forEach((el) => {
@@ -102,8 +142,7 @@ function kineticLoop(now: number) {
     k.chars.forEach((c, i) => {
       let t: number;
       if (idle) {
-        t = (Math.sin(now / 900 - i * 0.45) + 1) / 2;
-        t = t * t * 0.5;
+        t = breath(now / 900, i);
       } else {
         const b = c.el.getBoundingClientRect();
         const d = Math.hypot(mouse.x - (b.left + b.width / 2), mouse.y - (b.top + b.height / 2));

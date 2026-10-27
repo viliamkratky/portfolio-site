@@ -183,6 +183,15 @@ production, excluded from the sitemap). The owner approved Hubot Sans with the k
 - It works the same without JS and under reduced motion (it only moves as the page scrolls), so there is no
   separate fallback any more. Verified by the owner on an iPhone through the branch preview before merging.
 
+## 2026-10-27: Hero name fitted to its widest breath
+
+- The hero name was fitted at rest (`wdth` 100, 97 % of the content width), but the idle breathing wave runs
+  `wdth` 92–108.5, so at full breath it ran past the right gutter (on a 375 px phone ~6 px). With `data-fit-peak`
+  `fitAll` finds the widest moment of the wave and sizes the line so it ends exactly at the content edge, the same
+  distance from the right as the text starts from the left, on every breakpoint. Font size is now rounded to 0.1 px.
+- Only the idle breathing counts. Hovering near the letters on a fine pointer (up to `wdth` 125) can still reach
+  past it. Reduced motion has no breathing, so it keeps the rest-state fit. The other kinetic titles are unchanged.
+
 ---
 
 ---
