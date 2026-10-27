@@ -170,17 +170,29 @@ const socials = socialLinks(site);
   header.addEventListener('focusin', () => (header.dataset.hidden = 'false'));
 
   const root = document.documentElement;
+  // Browser chrome (the status bar on older iOS, Android's toolbar) follows the page background.
+  const themeColor = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
+  const syncThemeColor = () => themeColor?.setAttribute('content', getComputedStyle(root).getPropertyValue('--bg').trim());
+  syncThemeColor();
   document.querySelectorAll('[data-theme-toggle]').forEach((b) =>
     b.addEventListener('click', () => {
       const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
       const apply = () => {
+        // Colour transitions are switched off for exactly one style pass, so every element lands
+        // on the new theme at once; reading layout forces that pass before they come back.
+        root.dataset.themeSwitching = '';
         root.dataset.theme = next;
+        void document.body.offsetWidth;
+        delete root.dataset.themeSwitching;
+        syncThemeColor();
         try {
           localStorage.setItem('vk:theme', next);
         } catch {}
       };
+      // The open mobile menu covers the whole screen, so a crossfade adds nothing there, and on
+      // iPhone the top-layer dialog lagged behind the page inside a view transition: switch it directly.
       const d = document as Document & { startViewTransition?: (cb: () => void) => unknown };
-      if (d.startViewTransition && !matchMedia('(prefers-reduced-motion: reduce)').matches) d.startViewTransition(apply);
+      if (d.startViewTransition && !dialog.open && !matchMedia('(prefers-reduced-motion: reduce)').matches) d.startViewTransition(apply);
       else apply();
     }),
   );

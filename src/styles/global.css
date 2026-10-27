@@ -173,9 +173,15 @@
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
     scroll-padding-top: calc(var(--header-h) + 24px);
-    transition:
-      background-color 500ms var(--ease-out),
-      color 500ms var(--ease-out);
+  }
+  /* Set for the one style pass in which the theme changes (Header.astro). Without it every colour
+     transition (buttons, links, inputs) starts from the old theme: the view transition captures the
+     new page with those elements still in the old colours, and they catch up only after it ends. */
+  :root[data-theme-switching],
+  :root[data-theme-switching] *,
+  :root[data-theme-switching] *::before,
+  :root[data-theme-switching] *::after {
+    transition: none !important;
   }
   html.lenis,
   html.lenis body {
